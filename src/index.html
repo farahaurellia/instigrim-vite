@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" href="/favicon.png" />
+    <title>Instigrim</title>
+
+    <script type="module" src="/scripts/index.js"></script>
+  </head>
+  <body>
+    <header>
+      <div class="main-header container">
+        <a class="brand-name" href="#/">Instigrim</a>
+
+        <nav id="navigation-drawer" class="navigation-drawer">
+          <ul id="nav-list" class="nav-list">
+            <li><a href="#/">Beranda</a></li>
+            <li><a href="#/login">Masuk</a></li>
+            <li><a href="#/add-story">Tambah</a></li>
+          </ul>
+        </nav>
+
+        <button id="drawer-button" class="drawer-button">☰</button>
+      </div>
+    </header>
+
+    <main id="main-content" class="main-content"></main>
+
+    <script>
+      if (window.ViewTransition) {
+        const viewTransition = new ViewTransition();
+
+        const applyTransition = () => {
+          const mainContent = document.getElementById('main-content');
+
+          const transition = mainContent.viewTransition || (mainContent.viewTransition = new ViewTransition());
+
+          transition.start().then(() => {
+            mainContent.style.transition = 'opacity 0.3s ease-in-out';
+            mainContent.style.opacity = '0';
+
+            setTimeout(() => {
+              mainContent.innerHTML = `<h2>New Content Loaded</h2>`;
+              mainContent.style.opacity = '1';
+            }, 300); 
+          });
+        };
+
+        window.addEventListener('hashchange', applyTransition);
+
+        applyTransition();
+      } else {
+        console.warn('ViewTransition API not supported in this browser.');
+      }
+    </script>
+  </body>
+</html>
