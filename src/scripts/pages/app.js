@@ -39,8 +39,22 @@ class App {
     const url = getActiveRoute();
     const page = routes[url];
 
-    this.#content.innerHTML = await page.render();
-    await page.afterRender();
+    // Cek jika page punya presenter (misal DetailStoryView)
+    if (page && typeof page.showDetail === 'function') {
+      // Ambil id dari url hash: /stories/:id
+      const hash = window.location.hash.slice(1);
+      const id = hash.split('/')[2];
+      this.#content.innerHTML = '';
+      const detailElement = await page.showDetail(id);
+      if (detailElement instanceof HTMLElement) {
+        this.#content.appendChild(detailElement);
+      } else if (typeof detailElement === 'string') {
+        this.#content.innerHTML = detailElement;
+      }
+    } else {
+      this.#content.innerHTML = await page.render();
+      await page.afterRender();
+    }
   }
 }
 

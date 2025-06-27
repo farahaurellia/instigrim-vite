@@ -25,6 +25,10 @@ export default class AddStoryView {
     this.#marker = null;
     this.#mediaStream = null;
     this.#capturedBlob = null;
+
+    // Listen for page unload/hashchange to ensure camera is closed
+    window.addEventListener('hashchange', () => this.stopCamera());
+    window.addEventListener('beforeunload', () => this.stopCamera());
   }
 
   setPresenter(presenter) {
@@ -182,6 +186,11 @@ export default class AddStoryView {
     if (this.#mediaStream) {
       this.#mediaStream.getTracks().forEach(track => track.stop());
       this.#mediaStream = null;
+    }
+    // Sembunyikan container kamera jika masih terbuka
+    const cameraContainer = document.getElementById('cameraContainer');
+    if (cameraContainer) {
+      cameraContainer.style.display = 'none';
     }
   }
 

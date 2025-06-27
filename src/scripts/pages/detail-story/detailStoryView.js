@@ -9,15 +9,19 @@ class DetailStoryView {
       const data = await model.getDetailStory({ id, token });
       if (data.error) {
         this.appContainer.innerHTML = `<p style="color:red;">${data.message || 'Gagal memuat detail story.'}</p>`;
-        return;
+        return this.appContainer;
       }
       const story = data.story;
       this.appContainer.innerHTML = `
         <div class="detail-story">
           <button id="backToHomeBtn" class="auth-btn" style="margin-bottom:16px;">&larr; Kembali ke Beranda</button>
           <h2>${story.name}</h2>
-          <img src="${story.photoUrl}" alt="photo of ${story.name}" style="max-width:300px;display:block;margin-bottom:12px;" 
-            onerror="this.onerror=null;this.src='https://via.placeholder.com/300x200?text=No+Image';">
+          <img 
+            src="${story.photoUrl}" 
+            alt="photo of ${story.name}" 
+            style="max-width:300px;display:block;margin-bottom:12px;" 
+            onerror="this.onerror=null;this.src='https://via.placeholder.com/300x200?text=No+Image';"
+          >
           <p>${story.description || ''}</p>
           <small>Dibuat: ${new Date(story.createdAt).toLocaleString()}</small>
           <br>
@@ -38,18 +42,17 @@ class DetailStoryView {
 
       // Tampilkan peta jika ada lat/lon
       if (story.lat && story.lon && window.L) {
-        // Pastikan elemen sudah ada di DOM
         setTimeout(() => {
           const mapDiv = document.getElementById('map-detail');
           if (mapDiv) {
             if (window.myMap) {
               window.myMap.remove();
             }
-            window.myMap = L.map(mapDiv).setView([story.lat, story.lon], 13);
+            window.myMap = L.map(mapDiv).setView([parseFloat(story.lat), parseFloat(story.lon)], 13);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
               attribution: '&copy; OpenStreetMap contributors'
             }).addTo(window.myMap);
-            L.marker([story.lat, story.lon]).addTo(window.myMap);    
+            L.marker([parseFloat(story.lat), parseFloat(story.lon)]).addTo(window.myMap);
           }
         }, 0);
       }

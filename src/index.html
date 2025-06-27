@@ -4,55 +4,57 @@
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="shortcut icon" href="/favicon.png" />
-    <title>Instigrim</title>
+    <title>JejakKaki👣</title>
 
+    <!-- Google Fonts: Caveat -->
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/styles/styles.css" />
     <script type="module" src="/scripts/index.js"></script>
   </head>
-  <body>
-    <header>
+  <body style="background: #FFFDE7;">
+    <header style="background: linear-gradient(90deg, #4FC3F7 0%, #039BE5 100%);">
       <div class="main-header container">
-        <a class="brand-name" href="#/">Instigrim</a>
+        <a class="brand-name" href="#/" style="font-family: 'Caveat', cursive; font-size: 2.5rem; color: #fff;">
+          JejakKaki👣
+        </a>
 
-        <nav id="navigation-drawer" class="navigation-drawer">
+        <nav id="navigation-drawer" class="navigation-drawer" style="background: linear-gradient(90deg, #4FC3F7 0%, #039BE5 100%);">
           <ul id="nav-list" class="nav-list">
-            <li><a href="#/">Beranda</a></li>
-            <li><a href="#/login">Masuk</a></li>
-            <li><a href="#/add-story">Tambah</a></li>
+            <li><a href="#/" style="color: #fff;">Beranda</a></li>
+            <li><a href="#/login" style="color: #fff;">Masuk</a></li>
+            <li><a href="#/add-story" style="color: #fff;">Tambah</a></li>
           </ul>
         </nav>
 
-        <button id="drawer-button" class="drawer-button">☰</button>
+        <button id="drawer-button" class="drawer-button" style="color: #4FC3F7;">☰</button>
       </div>
     </header>
 
     <main id="main-content" class="main-content"></main>
 
     <script>
-      if (window.ViewTransition) {
-        const viewTransition = new ViewTransition();
 
-        const applyTransition = () => {
-          const mainContent = document.getElementById('main-content');
+      document.addEventListener('DOMContentLoaded', async () => {
+        const app = new App({
+          content: document.querySelector('#main-content'),
+          drawerButton: document.querySelector('#drawer-button'),
+          navigationDrawer: document.querySelector('#navigation-drawer'),
+        });
+        await app.renderPage();
 
-          const transition = mainContent.viewTransition || (mainContent.viewTransition = new ViewTransition());
-
-          transition.start().then(() => {
-            mainContent.style.transition = 'opacity 0.3s ease-in-out';
-            mainContent.style.opacity = '0';
-
-            setTimeout(() => {
-              mainContent.innerHTML = `<h2>New Content Loaded</h2>`;
-              mainContent.style.opacity = '1';
-            }, 300); 
-          });
+        const handleRouteChange = async () => {
+          if (document.startViewTransition) {
+            await document.startViewTransition(async () => {
+              await app.renderPage();
+            });
+          } else {
+            await app.renderPage();
+          }
         };
 
-        window.addEventListener('hashchange', applyTransition);
-
-        applyTransition();
-      } else {
-        console.warn('ViewTransition API not supported in this browser.');
-      }
+        window.addEventListener('hashchange', handleRouteChange);
+      });
     </script>
   </body>
 </html>
