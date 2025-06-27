@@ -34,7 +34,7 @@ export default class RegisterView {
   async render() {
     return `
       <!-- Container Utama -->
-      <section class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8" role="main" aria-label="Registration Page">
+      <main id="main-content" class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8" aria-label="Registration Page">
         <div class="max-w-md w-full space-y-8">
           <!-- Card Registrasi -->
           <div class="bg-white p-8 rounded-lg shadow-sm">
@@ -81,6 +81,7 @@ export default class RegisterView {
                   class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
                   aria-required="true"
                   autocomplete="new-password"
+                  aria-describedby="passwordHelp"
                 />
                 <p class="mt-1 text-sm text-gray-500" id="passwordHelp">Password must be at least 6 characters long.</p>
               </div>
@@ -104,7 +105,7 @@ export default class RegisterView {
             </div>
           </div>
         </div>
-      </section>
+      </main>
     `;
   }
 
@@ -165,4 +166,4 @@ export default class RegisterView {
     window.location.hash = '#/';
     window.location.reload();
   }
-} 
+}

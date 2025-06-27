@@ -37,7 +37,7 @@ export default class AddStoryView {
 
   async render() {
     return `
-      <section style="max-width: 800px; margin: 40px auto; padding: 20px;" role="main" aria-label="Tambah Cerita Baru">
+      <main id="main-content" style="max-width: 800px; margin: 40px auto; padding: 20px;" aria-label="Tambah Cerita Baru">
         <div style="background: #fff; border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 30px;">
           <h1>Tambah Story Baru</h1>
           <form id="addStoryForm" enctype="multipart/form-data">
@@ -75,7 +75,7 @@ export default class AddStoryView {
             <p id="successMessage" style="color: green;"></p>
           </form>
         </div>
-      </section>
+      </main>
     `;
   }
 
@@ -158,7 +158,7 @@ export default class AddStoryView {
         if (blob) {
           const file = new File([blob], 'photo.jpg', { type: 'image/jpeg' });
           photoFile.files = this.fileListFromFile(file);
-          previewContainer.innerHTML = `<img src="${URL.createObjectURL(blob)}" style="max-width:200px;border-radius:8px;">`;
+          previewContainer.innerHTML = `<img src="${URL.createObjectURL(blob)}" alt="Preview foto hasil kamera" style="max-width:200px;border-radius:8px;">`;
         }
       }, 'image/jpeg', 0.9);
       cameraContainer.style.display = 'none';
@@ -177,7 +177,7 @@ export default class AddStoryView {
     photoFile.addEventListener('change', () => {
       if (photoFile.files && photoFile.files[0]) {
         const url = URL.createObjectURL(photoFile.files[0]);
-        previewContainer.innerHTML = `<img src="${url}" style="max-width:200px;border-radius:8px;">`;
+        previewContainer.innerHTML = `<img src="${url}" alt="Preview foto yang dipilih" style="max-width:200px;border-radius:8px;">`;
       }
     });
   }

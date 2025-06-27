@@ -499,3 +499,19 @@ button i {
     max-width: 98vw;
   }
 }
+
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: 10px;
+  background: #AED581;
+  color: #222;
+  padding: 8px 16px;
+  z-index: 1000;
+  border-radius: 6px;
+  font-weight: bold;
+}
+.skip-link:focus {
+  left: 16px;
+  outline: 2px solid #333;
+}

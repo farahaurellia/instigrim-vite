@@ -23,57 +23,56 @@ export default class LoginView {
     const nama  = isLoggedIn ? JSON.parse(user).name : '';
 
     return `
-      <section class="login-sec" role="main" aria-label="Login Page">
+      <main id="main-content" class="login-sec" aria-label="Login Page">
         <div class="login-container">
           <div class="login-card">
             <div class="text-center">
               <h1 class="login-title">${isLoggedIn ? `Welcome, ${nama}`: 'Login'}</h1>
             </div>
-            <div id="loginForm" class="login-form">
-              ${!isLoggedIn ? `
-                <div>
-                  <label for="email" class="login-label">Email</label>
-                  <input 
-                    type="email" 
-                    id="email" 
-                    name="email"
-                    required 
-                    class="login-input"
-                    aria-required="true"
-                    autocomplete="email"
-                  />
-                </div>
-                <div>
-                  <label for="password" class="login-label">Password</label>
-                  <input 
-                    type="password" 
-                    id="password" 
-                    name="password"
-                    required 
-                    class="login-input"
-                    aria-required="true"
-                    autocomplete="current-password"
-                  />
-                </div>
-                <button 
-                  type="button" 
-                  id="loginButton"
-                  class="login-btn"
-                  aria-label="Login to your account"
-                >
-                  Login
-                </button>
-              ` : `
-                <button 
-                  type="button" 
-                  id="logoutBtn"
-                  class="auth-logout-btn"
-                  aria-label="Logout from your account"
-                >
-                  Logout
-                </button>
-              `}
-            </div>
+            <form id="loginForm" class="login-form" aria-label="Login form" ${!isLoggedIn ? '' : 'style="display:none;"'}>
+              <div>
+                <label for="email" class="login-label">Email</label>
+                <input 
+                  type="email" 
+                  id="email" 
+                  name="email"
+                  required 
+                  class="login-input"
+                  aria-required="true"
+                  autocomplete="email"
+                />
+              </div>
+              <div>
+                <label for="password" class="login-label">Password</label>
+                <input 
+                  type="password" 
+                  id="password" 
+                  name="password"
+                  required 
+                  class="login-input"
+                  aria-required="true"
+                  autocomplete="current-password"
+                />
+              </div>
+              <button 
+                type="submit" 
+                id="loginButton"
+                class="login-btn"
+                aria-label="Login to your account"
+              >
+                Login
+              </button>
+            </form>
+            ${isLoggedIn ? `
+              <button 
+                type="button" 
+                id="logoutBtn"
+                class="auth-logout-btn"
+                aria-label="Logout from your account"
+              >
+                Logout
+              </button>
+            ` : ''}
             <div class="register-link">
               <p class="register-text">
                 ${!isLoggedIn ? "Don't have an account?" : ""}
@@ -84,7 +83,7 @@ export default class LoginView {
             </div>
           </div>
         </div>
-      </section>
+      </main>
     `;
   }
 

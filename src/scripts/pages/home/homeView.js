@@ -47,31 +47,18 @@ export default class HomeView {
     const stories = this.#presenter.getStories();
 
     storiesList.innerHTML = stories.map((story) => `
-      <article class="story-card" tabindex="0" data-story-id="${story.id}" aria-label="Story oleh ${story.name}" 
-        style="
-          background: #FFCC80;
-          box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-          border-radius: 14px;
-          padding: 18px 16px 14px 16px;
-          width: 320px;
-          transition: box-shadow 0.2s;
-          cursor: pointer;
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        ">
-        <figure style="margin-bottom: 8px;">
+      <article class="story-card" tabindex="0" role="button" aria-pressed="false" data-story-id="${story.id}" aria-label="Story oleh ${story.name}">
+        <figure>
           <img src="${story.photoUrl}" 
               alt="Foto oleh ${story.name}" 
-              onerror="this.onerror=null;this.src='https://via.placeholder.com/220x140?text=No+Image';" 
-              style="width:100%;height:180px;object-fit:cover;border-radius:10px;">
-          <figcaption style="font-weight:bold; margin-top: 6px; color: #333;">${story.name}</figcaption>
+              onerror="this.onerror=null;this.src='https://via.placeholder.com/220x140?text=No+Image';">
+          <figcaption>${story.name}</figcaption>
         </figure>
-        <p style="color:#444; font-size:1.05rem; min-height:40px;">${story.description || ''}</p>
-        <small style="color:#888;">${new Date(story.createdAt).toLocaleString()}</small>
+        <p>${story.description || ''}</p>
+        <small>${new Date(story.createdAt).toLocaleString()}</small>
         ${
           story.lat && story.lon
-            ? `<div id="map-${story.id}" class="story-map" style="height:120px;border-radius:8px;overflow:hidden;margin-top:8px;"></div>`
+            ? `<div id="map-${story.id}" class="story-map"></div>`
             : ''
         }
       </article>

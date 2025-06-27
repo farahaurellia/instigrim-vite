@@ -1,6 +1,9 @@
 class DetailStoryView {
   constructor() {
-    this.appContainer = document.createElement('div');
+    this.appContainer = document.createElement('main');
+    this.appContainer.id = 'main-content';
+    this.appContainer.setAttribute('aria-label', 'Detail Story');
+    this.appContainer.tabIndex = -1; // Agar skip-link bisa fokus ke sini
   }
 
   async render({ id, model, token }) {
@@ -13,12 +16,12 @@ class DetailStoryView {
       }
       const story = data.story;
       this.appContainer.innerHTML = `
-        <div class="detail-story">
+        <section class="detail-story" aria-labelledby="detail-story-title">
           <button id="backToHomeBtn" class="auth-btn" style="margin-bottom:16px;">&larr; Kembali ke Beranda</button>
-          <h2>${story.name}</h2>
+          <h2 id="detail-story-title">${story.name}</h2>
           <img 
             src="${story.photoUrl}" 
-            alt="photo of ${story.name}" 
+            alt="Foto cerita oleh ${story.name}" 
             style="max-width:300px;display:block;margin-bottom:12px;" 
             onerror="this.onerror=null;this.src='https://via.placeholder.com/300x200?text=No+Image';"
           >
@@ -26,10 +29,10 @@ class DetailStoryView {
           <small>Dibuat: ${new Date(story.createdAt).toLocaleString()}</small>
           <br>
           ${story.lat && story.lon ? `
-            <div id="map-detail" style="height:250px;width:100%;margin-top:16px;border-radius:8px;overflow:hidden;"></div>
+            <div id="map-detail" style="height:250px;width:100%;margin-top:16px;border-radius:8px;overflow:hidden;" aria-label="Lokasi pada peta"></div>
             <small>Lokasi: ${story.lat}, ${story.lon}</small>
           ` : ''}
-        </div>
+        </section>
       `;
 
       // Event tombol kembali
