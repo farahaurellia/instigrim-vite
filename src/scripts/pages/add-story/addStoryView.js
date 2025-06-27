@@ -36,10 +36,15 @@ export default class AddStoryView {
   }
 
   async render() {
+    // Cek apakah user login
+    const user = localStorage.getItem('user');
+    const isGuest = !user;
+
     return `
       <main id="main-content" style="max-width: 800px; margin: 40px auto; padding: 20px;" aria-label="Tambah Cerita Baru">
         <div style="background: #fff; border-radius: 10px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); padding: 30px;">
           <h1>Tambah Story Baru</h1>
+          ${isGuest ? `<div style="margin-bottom:16px; color:#CA7842; font-weight:bold;">- Sebagai Tamu -</div>` : ''}
           <form id="addStoryForm" enctype="multipart/form-data">
             <div>
               <label for="description">Deskripsi:</label><br>
@@ -228,13 +233,12 @@ export default class AddStoryView {
 
   showLoading(isLoading) {
     const submitButton = document.querySelector('button[type="submit"]');
-
     if (isLoading) {
       submitButton.disabled = true;
       submitButton.textContent = 'Sending...';
     } else {
       submitButton.disabled = false;
-      submitButton.textContent = 'Submit Story';
+      submitButton.textContent = 'Tambah Story';
     }
   }
 

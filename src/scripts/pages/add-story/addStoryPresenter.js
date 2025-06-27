@@ -9,10 +9,8 @@ export default class AddStoryPresenter {
   }
 
   init() {
-    if (!this.#model.isAuthenticated()) {
-      window.location.hash = '#/login';
-      return false;
-    }
+    // Tidak redirect ke login, biarkan guest bisa add story
+    // Bisa tambahkan info di view jika guest
     return true;
   }
 
@@ -41,7 +39,16 @@ export default class AddStoryPresenter {
         data.append('lon', formData.lon);
       }
 
-      const result = await this.#model.addStory(data);
+      // Cek apakah user login
+      const user = localStorage.getItem('user');
+      let result;
+      if (user && JSON.parse(user).token) {
+        // User login, kirim sebagai user
+        result = await this.#model.addStory(data, JSON.parse(user).token);
+      } else {
+        // Guest, kirim sebagai guest (tanpa token)
+        result = await this.#model.addStoryasGuest(data);
+      }
       
       if (result.success) {
         this.#view.showSuccess('Story added successfully');
@@ -51,8 +58,9 @@ export default class AddStoryPresenter {
         this.#view.showLoading(false);
       }
     } catch (error) {
-      this.#view.showError('An error occurred while adding the story');
+      this.#view.showError(error?.message || 'An error occurred while adding the story');
       this.#view.showLoading(false);
+      console.error(error); // Tambahkan ini untuk debug
     }
   }
 }

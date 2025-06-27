@@ -11,16 +11,10 @@ export default class AddStoryModel {
     return JSON.parse(localStorage.getItem('user'));
   }
 
-  async addStory(formData) {
-    const user = this.getUserData();
-    
-    if (!user || !user.token) {
-      throw new Error('User not authenticated');
-    }
-
+  async addStory(formData, token) {
+    // Untuk user login (dengan token)
     try {
-      const responseData = await Api.addStory(formData, user.token);
-
+      const responseData = await Api.addStory(formData, token);
       if (!responseData.error) {
         return {
           success: true,
@@ -34,6 +28,27 @@ export default class AddStoryModel {
       }
     } catch (error) {
       console.error('Error adding story:', error);
+      throw error;
+    }
+  }
+
+  async addStoryasGuest(formData) {
+    // Untuk guest (tanpa token)
+    try {
+      const responseData = await Api.addGuestStory(formData);
+      if (!responseData.error) {
+        return {
+          success: true,
+          message: 'Story added successfully as guest'
+        };
+      } else {
+        return {
+          success: false,
+          message: responseData.message || 'Failed to add story as guest'
+        };
+      }
+    } catch (error) {
+      console.error('Error adding guest story:', error);
       throw error;
     }
   }

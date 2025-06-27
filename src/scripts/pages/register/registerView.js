@@ -2,10 +2,6 @@ import '../../../styles/styles.css';
 import RegisterModel from './registerModel.js';
 import RegisterPresenter from './registerPresenter.js';
 
-/**
- * View class for the register page
- * Handles rendering and UI interactions for the registration page
- */
 export default class RegisterView {
   #presenter;
   #model;
@@ -19,86 +15,78 @@ export default class RegisterView {
     });
   }
 
-  /**
-   * Sets the presenter for this view
-   * @param {Object} presenter - The presenter instance
-   */
   setPresenter(presenter) {
     this.#presenter = presenter;
   }
 
-  /**
-   * Merender konten halaman registrasi
-   * @returns {string} HTML string untuk halaman registrasi
-   */
   async render() {
     return `
       <!-- Container Utama -->
-      <main id="main-content" class="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8" aria-label="Registration Page">
-        <div class="max-w-md w-full space-y-8">
+      <main id="main-content" class="register-main" aria-label="Registration Page">
+        <div class="register-container">
           <!-- Card Registrasi -->
-          <div class="bg-white p-8 rounded-lg shadow-sm">
+          <div class="register-card">
             <div class="text-center">
-              <h1 class="text-2xl font-bold text-gray-900 mb-6">Register</h1>
+              <h1 class="register-title">Register</h1>
             </div>
             <!-- Form Registrasi -->
-            <form id="registerForm" class="space-y-6" aria-label="Registration form" onsubmit="return false;">
+            <form id="registerForm" class="register-form" aria-label="Registration form" onsubmit="return false;">
               <!-- Input Nama -->
               <div>
-                <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
+                <label for="name" class="register-label">Name</label>
                 <input 
                   type="text" 
                   id="name" 
                   name="name"
                   required 
-                  class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  class="register-input"
                   aria-required="true"
                   autocomplete="name"
                 />
               </div>
               <!-- Input Email -->
               <div>
-                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                <label for="email" class="register-label">Email</label>
                 <input 
                   type="email" 
                   id="email" 
                   name="email"
                   required 
-                  class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  class="register-input"
                   aria-required="true"
                   autocomplete="email"
                 />
               </div>
               <!-- Input Password -->
               <div>
-                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <label for="password" class="register-label">Password</label>
                 <input 
                   type="password" 
                   id="password" 
                   name="password"
                   minlength="8" 
                   required 
-                  class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                  class="register-input"
                   aria-required="true"
                   autocomplete="new-password"
                   aria-describedby="passwordHelp"
                 />
-                <p class="mt-1 text-sm text-gray-500" id="passwordHelp">Password must be at least 6 characters long.</p>
+                <p class="register-help" id="passwordHelp">Password must be at least 8 characters long.</p>
               </div>
               <!-- Tombol Submit -->
               <button 
                 type="submit" 
-                class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                class="register-btn"
                 aria-label="Create new account"
               >
                 Register
               </button>
             </form>
             <!-- Link Login -->
-            <div class="mt-4 text-center">
-              <p class="text-sm text-gray-600">
+            <div class="register-link">
+              <p class="register-text">
                 Already have an account? 
-                <a href="#/login" class="font-medium text-indigo-600 hover:text-indigo-500" aria-label="Go to login page">
+                <a href="#/login" class="register-link-text" aria-label="Go to login page">
                   Login here
                 </a>
               </p>
