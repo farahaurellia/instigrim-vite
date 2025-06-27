@@ -152,6 +152,5 @@ export default class RegisterView {
    */
   redirectToHome() {
     window.location.hash = '#/';
-    window.location.reload();
   }
 }

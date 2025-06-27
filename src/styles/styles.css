@@ -771,3 +771,95 @@ button i {
   left: 16px;
   outline: 2px solid #333;
 }
+
+/* Map style button & popup (shared for add story & detail story) */
+.map-detail-wrapper {
+  position: relative;
+}
+
+.map-layer-control-wrapper {
+  position: relative;
+}
+.map-style-btn {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1001;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.13);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.map-style-btn:hover {
+  background: #f7f7f7;
+}
+.map-style-popup {
+  display: none;
+  position: absolute;
+  top: 52px;
+  right: 0;
+  z-index: 1002;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.13);
+  padding: 16px 18px;
+  min-width: 180px;
+  animation: fadeInMapPopup 0.2s;
+}
+@keyframes fadeInMapPopup {
+  from { opacity: 0; transform: translateY(-10px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+.map-style-popup-title {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.map-style-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  width: 100%;
+  background: #f7f7f7;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 8px;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background 0.2s;
+}
+.map-style-option:last-child {
+  margin-bottom: 0;
+}
+.map-style-option:hover {
+  background: #e0e0e0;
+}
+.map-style-dot {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Responsive fix: pastikan map tetap terlihat pada layar kecil */
+@media (max-width: 600px) {
+  .map-detail {
+    height: 180px;
+  }
+  .map-style-popup {
+    min-width: 120px;
+    right: 8px;
+    top: 56px;
+  }
+  .map-style-btn {
+    right: 8px;
+    top: 8px;
+  }
+}

@@ -141,6 +141,5 @@ export default class LoginView {
 
   redirectToHome() {
     window.location.hash = '#';
-    window.location.reload();
   }
 }

@@ -94,13 +94,56 @@ export default class AddStoryView {
     this.#lonInput = document.getElementById('lon');
 
     if (this.#mapPickerDiv) {
+      // Tambahkan tombol bulat dengan icon edit
+      const mapStyleBtnHtml = `
+        <button id="mapStyleBtn" type="button" title="Pilih gaya peta" class="map-style-btn">
+          <svg width="22" height="22" fill="none" stroke="#CA7842" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <path d="M12 20h9" />
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/>
+          </svg>
+        </button>
+        <div id="mapStylePopup" class="map-style-popup">
+          <div style="font-weight:bold;margin-bottom:10px;">Pilih Gaya Peta</div>
+          <button class="map-style-option" data-style="osm">
+            <span style="width:18px;height:18px;border-radius:50%;background:#B2CD9C;display:inline-block;"></span>
+            Default (OSM)
+          </button>
+          <button class="map-style-option" data-style="topo">
+            <span style="width:18px;height:18px;border-radius:50%;background:#CA7842;display:inline-block;"></span>
+            OpenTopoMap
+          </button>
+          <button class="map-style-option" data-style="esri">
+            <span style="width:18px;height:18px;border-radius:50%;background:#4B352A;display:inline-block;"></span>
+            Esri World Imagery
+          </button>
+        </div>
+      `;
+      // Pastikan parent relative agar tombol absolute
+      this.#mapPickerDiv.parentElement.style.position = "relative";
+      this.#mapPickerDiv.insertAdjacentHTML('beforebegin', mapStyleBtnHtml);
+
       const defaultLat = -6.200000;
       const defaultLon = 106.816666;
       const map = L.map(this.#mapPickerDiv).setView([defaultLat, defaultLon], 5);
 
-      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-      }).addTo(map);
+      // Definisikan semua layer
+      const layers = {
+        "osm": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '&copy; OpenStreetMap contributors'
+        }),
+        "esri": L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          attribution: 'Tiles &copy; Esri'
+        }),
+        "topo": L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+          attribution: 'OpenTopoMap contributors'
+        })
+      };
+      layers["osm"].addTo(map);
+      let currentBaseLayer = layers["osm"];
+
+      setTimeout(() => {
+        map.invalidateSize();
+      }, 0);
 
       let marker = null;
 
@@ -130,6 +173,36 @@ export default class AddStoryView {
           marker.bindPopup(desc).openPopup();
         }
       });
+
+      // --- Popup logic ---
+      const mapStyleBtn = document.getElementById('mapStyleBtn');
+      const mapStylePopup = document.getElementById('mapStylePopup');
+      if (mapStyleBtn && mapStylePopup) {
+        mapStyleBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          mapStylePopup.style.display = mapStylePopup.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // Tutup popup jika klik di luar
+        document.addEventListener('click', (e) => {
+          if (!mapStylePopup.contains(e.target) && e.target !== mapStyleBtn) {
+            mapStylePopup.style.display = 'none';
+          }
+        });
+
+        // Pilihan gaya map
+        mapStylePopup.querySelectorAll('.map-style-option').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const selected = btn.getAttribute('data-style');
+            if (currentBaseLayer) {
+              map.removeLayer(currentBaseLayer);
+            }
+            layers[selected].addTo(map);
+            currentBaseLayer = layers[selected];
+            mapStylePopup.style.display = 'none';
+          });
+        });
+      }
     }
   }
 

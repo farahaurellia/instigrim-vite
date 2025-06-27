@@ -56,15 +56,30 @@ export default class HomeView {
     const storiesList = document.getElementById('storiesList');
     const stories = this.#presenter.getStories();
 
-    // Tombol kontrol layer peta (di luar card)
+    // Tombol settings bulat dengan popup pilihan gaya map
     let mapLayerControlHtml = `
-      <div id="mapLayerControl" style="width:100%;margin-bottom:18px;display:flex;gap:10px;align-items:center;">
-        <label for="mapLayerSelect" style="font-weight:bold;">Gaya Peta:</label>
-        <select id="mapLayerSelect" style="padding:6px 12px;border-radius:6px;">
-          <option value="osm">Default</option>
-          <option value="topo">OpenTopoMap</option>
-          <option value="esri">Esri World Imagery</option>
-        </select>
+      <div class="map-layer-control-wrapper" style="position:relative;width:100%;margin-bottom:18px;">
+        <button id="mapStyleBtn" type="button" title="Pilih gaya peta" class="map-style-btn">
+          <svg width="22" height="22" fill="none" stroke="#CA7842" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 8.6 15a1.65 1.65 0 0 0-1.82-.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 15 8.6c.22 0 .43.03.64.08"/>
+          </svg>
+        </button>
+        <div id="mapStylePopup" class="map-style-popup">
+          <div class="map-style-popup-title">Pilih Gaya Peta</div>
+          <button class="map-style-option" data-style="osm">
+            <span class="map-style-dot" style="background:#B2CD9C;"></span>
+            Default (OSM)
+          </button>
+          <button class="map-style-option" data-style="topo">
+            <span class="map-style-dot" style="background:#CA7842;"></span>
+            OpenTopoMap
+          </button>
+          <button class="map-style-option" data-style="esri">
+            <span class="map-style-dot" style="background:#4B352A;"></span>
+            Esri World Imagery
+          </button>
+        </div>
       </div>
     `;
 
@@ -102,13 +117,12 @@ export default class HomeView {
 
     // Untuk setiap map, buat tileLayer baru untuk setiap gaya
     const maps = [];
-    const mapLayers = []; // Array of {osm, esri, stamen} per map
+    const mapLayers = [];
 
     stories.forEach(story => {
       if (story.lat && story.lon) {
         const mapElement = document.getElementById(`map-${story.id}`);
         const map = L.map(mapElement, { attributionControl: false, zoomControl: false });
-        // Buat tileLayer baru untuk setiap map
         const layers = {
           "osm": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors'
@@ -134,17 +148,34 @@ export default class HomeView {
       }
     });
 
-    // Event listener untuk select layer, mengubah semua peta sekaligus
-    const mapLayerSelect = document.getElementById('mapLayerSelect');
-    if (mapLayerSelect) {
-      mapLayerSelect.addEventListener('change', (e) => {
-        const selected = e.target.value;
-        maps.forEach((map, idx) => {
-          if (map._currentBaseLayer) {
-            map.removeLayer(map._currentBaseLayer);
-          }
-          mapLayers[idx][selected].addTo(map);
-          map._currentBaseLayer = mapLayers[idx][selected];
+    // --- Popup logic ---
+    const mapStyleBtn = document.getElementById('mapStyleBtn');
+    const mapStylePopup = document.getElementById('mapStylePopup');
+    if (mapStyleBtn && mapStylePopup) {
+      mapStyleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        mapStylePopup.style.display = mapStylePopup.style.display === 'none' ? 'block' : 'none';
+      });
+
+      // Tutup popup jika klik di luar
+      document.addEventListener('click', (e) => {
+        if (!mapStylePopup.contains(e.target) && e.target !== mapStyleBtn) {
+          mapStylePopup.style.display = 'none';
+        }
+      });
+
+      // Pilihan gaya map
+      mapStylePopup.querySelectorAll('.map-style-option').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          const selected = btn.getAttribute('data-style');
+          maps.forEach((map, idx) => {
+            if (map._currentBaseLayer) {
+              map.removeLayer(map._currentBaseLayer);
+            }
+            mapLayers[idx][selected].addTo(map);
+            map._currentBaseLayer = mapLayers[idx][selected];
+          });
+          mapStylePopup.style.display = 'none';
         });
       });
     }
