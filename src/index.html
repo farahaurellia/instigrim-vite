@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="shortcut icon" href="/favicon.png" />
     <title>JejakKaki👣</title>
@@ -19,7 +19,6 @@
         <a class="brand-name" href="#/" style="font-family: 'Caveat', cursive; font-size: 2.5rem; color: #fff;">
           JejakKaki👣
         </a>
-
         <nav id="navigation-drawer" class="navigation-drawer" style="background: linear-gradient(90deg, #4FC3F7 0%, #039BE5 100%);">
           <ul id="nav-list" class="nav-list">
             <li><a href="#/" style="color: #fff;">Beranda</a></li>
@@ -27,35 +26,9 @@
             <li><a href="#/add-story" style="color: #fff;">Tambah</a></li>
           </ul>
         </nav>
-
         <button id="drawer-button" class="drawer-button" style="color: #4FC3F7;">☰</button>
       </div>
     </header>
-
     <main id="main-content" class="main-content"></main>
-
-    <script>
-
-      document.addEventListener('DOMContentLoaded', async () => {
-        const app = new App({
-          content: document.querySelector('#main-content'),
-          drawerButton: document.querySelector('#drawer-button'),
-          navigationDrawer: document.querySelector('#navigation-drawer'),
-        });
-        await app.renderPage();
-
-        const handleRouteChange = async () => {
-          if (document.startViewTransition) {
-            await document.startViewTransition(async () => {
-              await app.renderPage();
-            });
-          } else {
-            await app.renderPage();
-          }
-        };
-
-        window.addEventListener('hashchange', handleRouteChange);
-      });
-    </script>
   </body>
 </html>

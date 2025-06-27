@@ -11,7 +11,15 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
   await app.renderPage();
 
-  window.addEventListener('hashchange', async () => {
-    await app.renderPage();
-  });
+  const handleRouteChange = async () => {
+    if (document.startViewTransition) {
+      await document.startViewTransition(async () => {
+        await app.renderPage();
+      });
+    } else {
+      await app.renderPage();
+    }
+  };
+
+  window.addEventListener('hashchange', handleRouteChange);
 });
