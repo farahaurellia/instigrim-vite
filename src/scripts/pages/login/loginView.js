@@ -32,44 +32,18 @@ export default class LoginView {
             <form id="loginForm" class="login-form" aria-label="Login form" ${!isLoggedIn ? '' : 'style="display:none;"'}>
               <div>
                 <label for="email" class="login-label">Email</label>
-                <input 
-                  type="email" 
-                  id="email" 
-                  name="email"
-                  required 
-                  class="login-input"
-                  aria-required="true"
-                  autocomplete="email"
-                />
+                <input type="email" id="email" name="email" required class="login-input" aria-required="true" autocomplete="email" />
               </div>
               <div>
                 <label for="password" class="login-label">Password</label>
-                <input 
-                  type="password" 
-                  id="password" 
-                  name="password"
-                  required 
-                  class="login-input"
-                  aria-required="true"
-                  autocomplete="current-password"
-                />
+                <input type="password" id="password" name="password" required class="login-input" aria-required="true" autocomplete="current-password"/>
               </div>
-              <button 
-                type="submit" 
-                id="loginButton"
-                class="login-btn"
-                aria-label="Login to your account"
-              >
+              <button type="submit" id="loginButton" class="login-btn" aria-label="Login to your account">
                 Login
               </button>
             </form>
             ${isLoggedIn ? `
-              <button 
-                type="button" 
-                id="logoutBtn"
-                class="auth-logout-btn"
-                aria-label="Logout from your account"
-              >
+              <button type="button" id="logoutBtn" class="auth-logout-btn" aria-label="Logout from your account">
                 Logout
               </button>
             ` : ''}

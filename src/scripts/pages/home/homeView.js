@@ -32,40 +32,12 @@ export default class HomeView {
       return '';
     }
 
-    const stories = this.#presenter.getStories();
-
-    return `
-      <main>
-        <h1 style="font-family: 'Caveat', cursive; font-size: 2.2rem; color: #333; margin-bottom: 18px;">
-          ${isLoggedIn && nama ? `Halo, ${nama}! Jalan-jalan kemana hari ini?` : 'Beranda'}
-        </h1>
-        <section id="storiesList" style="display: flex; flex-wrap: wrap; gap: 24px;background: #FFFDE7;" aria-label="Daftar Stories">
-          <p>${isLoggedIn ? 'Memuat stories...' : 'Silakan login untuk melihat stories.'}</p>
-        </section>
-      </main>
-    `;
-  }
-
-  async afterRender() {
-    if (this.#presenter) {
-      await this.#presenter.init();
-    }
-  }
-
-  displayStories() {
-    const storiesList = document.getElementById('storiesList');
-    const stories = this.#presenter.getStories();
-
-    // Tombol settings bulat dengan popup pilihan gaya map
-    let mapLayerControlHtml = `
-      <div class="map-layer-control-wrapper" style="position:relative;width:100%;margin-bottom:18px;">
-        <button id="mapStyleBtn" type="button" title="Pilih gaya peta" class="map-style-btn">
-          <svg width="22" height="22" fill="none" stroke="#CA7842" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-            <circle cx="12" cy="12" r="3"/>
-            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 8.6 15a1.65 1.65 0 0 0-1.82-.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 15 8.6c.22 0 .43.03.64.08"/>
-          </svg>
+    const mapLayerControlHtml = `
+      <div class="map-layer-control-inline">
+        <button id="mapStyleBtn" type="button" title="Pilih gaya peta" class="map-style-btn" style="top: 110px; right: 10px;">
+          <i data-feather="settings"></i>
         </button>
-        <div id="mapStylePopup" class="map-style-popup">
+        <div id="mapStylePopup" class="map-style-popup" style="top: 155px; right: 10px;">
           <div class="map-style-popup-title">Pilih Gaya Peta</div>
           <button class="map-style-option" data-style="osm">
             <span class="map-style-dot" style="background:#B2CD9C;"></span>
@@ -83,7 +55,36 @@ export default class HomeView {
       </div>
     `;
 
-    storiesList.innerHTML = mapLayerControlHtml + stories.map((story) => `
+    return `
+      <main>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
+          <h1 style="font-family: 'Caveat', cursive; font-size: 2.2rem; color: #333; margin-left:20px;">
+            ${
+              isLoggedIn && nama
+                ? `Halo, <span class="home-username">${nama}</span>! Jalan-jalan kemana hari ini?`
+                : 'Beranda'
+            }
+          </h1>
+          ${mapLayerControlHtml}
+        </div>
+        <section id="storiesList" style="display: flex; flex-wrap: wrap; gap: 24px;background: #FFFDE7;" aria-label="Daftar Stories">
+          <p>${isLoggedIn ? 'Memuat stories...' : 'Silakan login untuk melihat stories.'}</p>
+        </section>
+      </main>
+    `;
+  }
+
+  async afterRender() {
+    if (this.#presenter) {
+      await this.#presenter.init();
+    }
+  }
+
+  displayStories() {
+    const storiesList = document.getElementById('storiesList');
+    const stories = this.#presenter.getStories();
+
+    storiesList.innerHTML = stories.map((story) => `
       <article class="story-card" tabindex="0" role="button" aria-pressed="false" data-story-id="${story.id}" aria-label="Story oleh ${story.name}">
         <figure>
           <img src="${story.photoUrl}" 
@@ -178,6 +179,10 @@ export default class HomeView {
           mapStylePopup.style.display = 'none';
         });
       });
+    }
+
+    if (window.feather) {
+      window.feather.replace();
     }
   }
 }

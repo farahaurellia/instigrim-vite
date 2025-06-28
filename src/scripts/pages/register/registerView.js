@@ -7,7 +7,6 @@ export default class RegisterView {
   #model;
 
   constructor() {
-    // Initialize model and presenter
     this.#model = new RegisterModel();
     this.#presenter = new RegisterPresenter({
       model: this.#model,
@@ -21,68 +20,29 @@ export default class RegisterView {
 
   async render() {
     return `
-      <!-- Container Utama -->
       <main id="main-content" class="register-main" aria-label="Registration Page">
         <div class="register-container">
-          <!-- Card Registrasi -->
           <div class="register-card">
             <div class="text-center">
               <h1 class="register-title">Register</h1>
             </div>
-            <!-- Form Registrasi -->
             <form id="registerForm" class="register-form" aria-label="Registration form" onsubmit="return false;">
-              <!-- Input Nama -->
               <div>
                 <label for="name" class="register-label">Name</label>
-                <input 
-                  type="text" 
-                  id="name" 
-                  name="name"
-                  required 
-                  class="register-input"
-                  aria-required="true"
-                  autocomplete="name"
-                />
+                <input class="register-input" type="text" id="name" name="name" required aria-required="true" autocomplete="name"/>
               </div>
-              <!-- Input Email -->
               <div>
                 <label for="email" class="register-label">Email</label>
-                <input 
-                  type="email" 
-                  id="email" 
-                  name="email"
-                  required 
-                  class="register-input"
-                  aria-required="true"
-                  autocomplete="email"
-                />
+                <input class="register-input" type="email" id="email" name="email" required aria-required="true" autocomplete="email" />
               </div>
-              <!-- Input Password -->
               <div>
                 <label for="password" class="register-label">Password</label>
-                <input 
-                  type="password" 
-                  id="password" 
-                  name="password"
-                  minlength="8" 
-                  required 
-                  class="register-input"
-                  aria-required="true"
-                  autocomplete="new-password"
-                  aria-describedby="passwordHelp"
-                />
-                <p class="register-help" id="passwordHelp">Password must be at least 8 characters long.</p>
+                <input class="register-input" type="password" id="password" name="password" required aria-required="true" minlength="8" autocomplete="new-password"/>
               </div>
-              <!-- Tombol Submit -->
-              <button 
-                type="submit" 
-                class="register-btn"
-                aria-label="Create new account"
-              >
+              <button type="submit" class="register-btn" aria-label="Create new account">
                 Register
               </button>
             </form>
-            <!-- Link Login -->
             <div class="register-link">
               <p class="register-text">
                 Already have an account? 
@@ -97,17 +57,10 @@ export default class RegisterView {
     `;
   }
 
-  /**
-   * Menangani interaksi setelah halaman dirender
-   * Mengatur event listener untuk form registrasi
-   */
   async afterRender() {
     this.setupEventListeners();
   }
 
-  /**
-   * Sets up all event listeners for the registration form
-   */
   setupEventListeners() {
     const registerForm = document.getElementById('registerForm');
     
@@ -117,7 +70,7 @@ export default class RegisterView {
     }
 
     registerForm.addEventListener('submit', (e) => {
-      e.preventDefault(); // Prevent form submission
+      e.preventDefault(); 
       
       const name = document.getElementById('name').value;
       const email = document.getElementById('email').value;
@@ -131,25 +84,14 @@ export default class RegisterView {
     });
   }
 
-  /**
-   * Shows a success message to the user
-   * @param {string} message - Success message to display
-   */
   showSuccess(message) {
     alert(message);
   }
 
-  /**
-   * Shows an error message to the user
-   * @param {string} message - Error message to display
-   */
   showError(message) {
     alert(message);
   }
 
-  /**
-   * Redirects the user to the login page
-   */
   redirectToHome() {
     window.location.hash = '#/';
   }

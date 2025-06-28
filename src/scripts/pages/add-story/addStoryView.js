@@ -26,7 +26,6 @@ export default class AddStoryView {
     this.#mediaStream = null;
     this.#capturedBlob = null;
 
-    // Listen for page unload/hashchange to ensure camera is closed
     window.addEventListener('hashchange', () => this.stopCamera());
     window.addEventListener('beforeunload', () => this.stopCamera());
   }
@@ -36,7 +35,6 @@ export default class AddStoryView {
   }
 
   async render() {
-    // Cek apakah user login
     const user = localStorage.getItem('user');
     const isGuest = !user;
 
@@ -94,7 +92,6 @@ export default class AddStoryView {
     this.#lonInput = document.getElementById('lon');
 
     if (this.#mapPickerDiv) {
-      // Tambahkan tombol bulat dengan icon edit
       const mapStyleBtnHtml = `
         <button id="mapStyleBtn" type="button" title="Pilih gaya peta" class="map-style-btn">
           <svg width="22" height="22" fill="none" stroke="#CA7842" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
@@ -118,7 +115,6 @@ export default class AddStoryView {
           </button>
         </div>
       `;
-      // Pastikan parent relative agar tombol absolute
       this.#mapPickerDiv.parentElement.style.position = "relative";
       this.#mapPickerDiv.insertAdjacentHTML('beforebegin', mapStyleBtnHtml);
 
@@ -126,7 +122,6 @@ export default class AddStoryView {
       const defaultLon = 106.816666;
       const map = L.map(this.#mapPickerDiv).setView([defaultLat, defaultLon], 5);
 
-      // Definisikan semua layer
       const layers = {
         "osm": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
           attribution: '&copy; OpenStreetMap contributors'
@@ -174,7 +169,6 @@ export default class AddStoryView {
         }
       });
 
-      // --- Popup logic ---
       const mapStyleBtn = document.getElementById('mapStyleBtn');
       const mapStylePopup = document.getElementById('mapStylePopup');
       if (mapStyleBtn && mapStylePopup) {
@@ -183,14 +177,12 @@ export default class AddStoryView {
           mapStylePopup.style.display = mapStylePopup.style.display === 'none' ? 'block' : 'none';
         });
 
-        // Tutup popup jika klik di luar
         document.addEventListener('click', (e) => {
           if (!mapStylePopup.contains(e.target) && e.target !== mapStyleBtn) {
             mapStylePopup.style.display = 'none';
           }
         });
 
-        // Pilihan gaya map
         mapStylePopup.querySelectorAll('.map-style-option').forEach(btn => {
           btn.addEventListener('click', (e) => {
             const selected = btn.getAttribute('data-style');
@@ -265,7 +257,6 @@ export default class AddStoryView {
       this.#mediaStream.getTracks().forEach(track => track.stop());
       this.#mediaStream = null;
     }
-    // Sembunyikan container kamera jika masih terbuka
     const cameraContainer = document.getElementById('cameraContainer');
     if (cameraContainer) {
       cameraContainer.style.display = 'none';

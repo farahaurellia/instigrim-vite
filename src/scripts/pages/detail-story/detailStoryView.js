@@ -3,7 +3,7 @@ class DetailStoryView {
     this.appContainer = document.createElement('main');
     this.appContainer.id = 'main-content';
     this.appContainer.setAttribute('aria-label', 'Detail Story');
-    this.appContainer.tabIndex = -1; // Agar skip-link bisa fokus ke sini
+    this.appContainer.tabIndex = -1; 
     this._map = null;
     this._mapLayers = null;
     this._currentBaseLayer = null;
@@ -48,7 +48,6 @@ class DetailStoryView {
         </section>
       `;
 
-      // Event tombol kembali
       const backBtn = this.appContainer.querySelector('#backToHomeBtn');
       if (backBtn) {
         backBtn.addEventListener('click', () => {
@@ -56,7 +55,6 @@ class DetailStoryView {
         });
       }
 
-      // Tampilkan peta jika ada lat/lon
       if (story.lat && story.lon && window.L) {
         setTimeout(() => {
           const mapDiv = document.getElementById('map-detail');
@@ -86,7 +84,6 @@ class DetailStoryView {
 
             L.marker([parseFloat(story.lat), parseFloat(story.lon)]).addTo(this._map);
 
-            // Layer control select
             const mapLayerSelect = document.getElementById('mapLayerSelect');
             if (mapLayerSelect) {
               mapLayerSelect.addEventListener('change', (e) => {
@@ -109,6 +106,6 @@ class DetailStoryView {
 }
 
 const hash = window.location.hash.slice(1);
-const id = hash.split('/')[2]; // /stories/:id
+const id = hash.split('/')[2]; 
 
 export default DetailStoryView;

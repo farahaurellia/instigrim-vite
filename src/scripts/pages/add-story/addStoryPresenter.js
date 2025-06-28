@@ -9,8 +9,6 @@ export default class AddStoryPresenter {
   }
 
   init() {
-    // Tidak redirect ke login, biarkan guest bisa add story
-    // Bisa tambahkan info di view jika guest
     return true;
   }
 
@@ -39,14 +37,11 @@ export default class AddStoryPresenter {
         data.append('lon', formData.lon);
       }
 
-      // Cek apakah user login
       const user = localStorage.getItem('user');
       let result;
       if (user && JSON.parse(user).token) {
-        // User login, kirim sebagai user
         result = await this.#model.addStory(data, JSON.parse(user).token);
       } else {
-        // Guest, kirim sebagai guest (tanpa token)
         result = await this.#model.addStoryasGuest(data);
       }
       
@@ -60,7 +55,7 @@ export default class AddStoryPresenter {
     } catch (error) {
       this.#view.showError(error?.message || 'An error occurred while adding the story');
       this.#view.showLoading(false);
-      console.error(error); // Tambahkan ini untuk debug
+      console.error(error); 
     }
   }
 }
