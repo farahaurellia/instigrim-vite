@@ -589,7 +589,7 @@ button i {
 }
 
 #addStoryForm button[type="submit"] {
-  background: linear-gradient(90deg, #f58529 0%, #dd2a7b 50%, #515bd4 100%);
+  background: linear-gradient(90deg, var(--oranye, #CA7842) 0%, var(--hijau-muda, #B2CD9C) 100%);
   color: white;
   font-weight: bold;
   border: none;
@@ -601,7 +601,7 @@ button i {
 }
 
 #addStoryForm button[type="submit"]:hover {
-  background: linear-gradient(90deg, #dd2a7b 0%, #f58529 100%);
+  background: linear-gradient(190deg, var(--oranye, #CA7842) 0%, var(--hijau-muda, #B2CD9C) 100%);
 }
 
 #addStoryForm p#errorMessage {

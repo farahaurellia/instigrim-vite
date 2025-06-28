@@ -12,7 +12,6 @@ export default class AddStoryModel {
   }
 
   async addStory(formData, token) {
-    // Untuk user login (dengan token)
     try {
       const responseData = await Api.addStory(formData, token);
       if (!responseData.error) {
@@ -33,7 +32,6 @@ export default class AddStoryModel {
   }
 
   async addStoryasGuest(formData) {
-    // Untuk guest (tanpa token)
     try {
       const responseData = await Api.addGuestStory(formData);
       if (!responseData.error) {

@@ -26,7 +26,6 @@ export default class HomeModel {
       const responseData = await Api.getStories(this.page, this.size, user.token);
 
       if (responseData.error === false) {
-        // Filter agar tidak ada story dengan id yang sama dua kali
         const existingIds = new Set(this.stories.map(story => story.id));
         const uniqueNewStories = responseData.listStory.filter(story => !existingIds.has(story.id));
         this.stories = [...this.stories, ...uniqueNewStories];

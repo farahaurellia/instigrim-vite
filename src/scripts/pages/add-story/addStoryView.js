@@ -73,7 +73,7 @@ export default class AddStoryView {
               <label>Pilih lokasi pada peta:</label>
               <div id="map-picker" style="height:250px;width:100%;border-radius:8px;overflow:hidden;"></div>
             </div>
-            <button type="submit" style="background: linear-gradient(90deg, #f58529 0%, #dd2a7b 50%, #515bd4 100%); color: white;">Tambah Story</button>
+            <button type="submit" style="color: white;">Tambah Story</button>
             <p id="errorMessage" style="color: red;"></p>
             <p id="successMessage" style="color: green;"></p>
           </form>

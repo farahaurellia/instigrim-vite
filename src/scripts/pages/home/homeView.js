@@ -102,7 +102,6 @@ export default class HomeView {
       </article>
     `).join('');
 
-    // Event listener untuk navigasi ke detail story
     storiesList.querySelectorAll('.story-card').forEach(card => {
       card.addEventListener('click', () => {
         const storyId = card.getAttribute('data-story-id');
@@ -116,7 +115,6 @@ export default class HomeView {
       });
     });
 
-    // Untuk setiap map, buat tileLayer baru untuk setiap gaya
     const maps = [];
     const mapLayers = [];
 
@@ -149,7 +147,6 @@ export default class HomeView {
       }
     });
 
-    // --- Popup logic ---
     const mapStyleBtn = document.getElementById('mapStyleBtn');
     const mapStylePopup = document.getElementById('mapStylePopup');
     if (mapStyleBtn && mapStylePopup) {
@@ -158,14 +155,12 @@ export default class HomeView {
         mapStylePopup.style.display = mapStylePopup.style.display === 'none' ? 'block' : 'none';
       });
 
-      // Tutup popup jika klik di luar
       document.addEventListener('click', (e) => {
         if (!mapStylePopup.contains(e.target) && e.target !== mapStyleBtn) {
           mapStylePopup.style.display = 'none';
         }
       });
 
-      // Pilihan gaya map
       mapStylePopup.querySelectorAll('.map-style-option').forEach(btn => {
         btn.addEventListener('click', (e) => {
           const selected = btn.getAttribute('data-style');

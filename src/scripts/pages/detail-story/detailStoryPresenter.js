@@ -11,7 +11,6 @@ export default class DetailStoryPresenter {
       token = user.token;
     }
 
-    // Fungsi yang dipanggil oleh router atau controller
     return await this.view.render({
       id: storyId,
       model: {
