@@ -44,26 +44,22 @@ export default class DetailStoryModel {
   getStory() {
     return this.story;
   }
-
-  async getLocationDescription(lat, lon) {
+  
+  async getCityCountryFromLatLon(lat, lon) {
+    if (!lat || !lon) return { city: '', country: '' };
     try {
-      // CORS warning: gunakan proxy hanya untuk dev/testing
-      const url = `https://api.allorigins.win/raw?url=${encodeURIComponent(
-        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`
-      )}`;
+      const url = `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`;
       const response = await fetch(url);
+      if (!response.ok) return { city: '', country: '' };
+
       const data = await response.json();
       const address = data.address || {};
       const city = address.city || address.town || address.village || '';
-      const state = address.state || '';
       const country = address.country || '';
-      if (city && country) return `${city}, ${country}`;
-      if (state && country) return `${state}, ${country}`;
-      if (country) return country;
-      return 'Lokasi tidak diketahui';
+      return { city, country };
     } catch (err) {
-      console.error('[DetailStoryModel] getLocationDescription error:', err);
-      return 'Lokasi tidak diketahui';
+      console.error('[DetailStoryModel] getCityCountryFromLatLon error:', err);
+      return { city: '', country: '' };
     }
   }
 }

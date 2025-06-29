@@ -4,33 +4,34 @@ export default class DetailStoryPresenter {
     this.model = model;
   }
 
-  async showDetail(storyId) {
-    let token = null;
-    const user = this.model.getUserData();
-    if (user && user.token) {
-      token = user.token;
-    }
+  // PERUBAHAN UTAMA: Menerima 'mainContent' dan 'storyId'
+  async showDetail(mainContent, storyId) {
+    mainContent.innerHTML = '<p style="text-align:center; padding: 2rem;">Memuat cerita...</p>';
 
-    const html = await this.view.render({
-      id: storyId,
-      model: {
-        getDetailStory: async ({ id, token }) => {
-          const result = await this.model.loadStoryDetail(id);
-          if (result.success) {
-            return { error: false, story: result.story };
-          } else {
-            return { error: true, message: result.message };
-          }
-        }
-      },
-      token
-    });
+    try {
+      const result = await this.model.loadStoryDetail(storyId);
 
-    const container = document.getElementById('main-content');
-    if (container) {
-      container.innerHTML = html;
-      await this.view.afterRender({ id: storyId });
+      if (!result.success) {
+        throw new Error(result.message || 'Gagal memuat cerita.');
+      }
+      
+      const story = this.model.getStory();
+      if (!story) {
+        throw new Error('Data cerita tidak ditemukan.');
+      }
+
+      // 1. Dapatkan HTML dari view
+      const html = await this.view.render(story);
+      // 2. Render HTML langsung ke dalam container yang diberikan
+      mainContent.innerHTML = html;
+
+      // 3. Panggil afterRender untuk menginisialisasi peta pada DOM yang baru
+      const { city, country } = await this.model.getCityCountryFromLatLon(story.lat, story.lon);
+      await this.view.afterRender(story, { city, country });
+
+    } catch (error) {
+      console.error('Error in showDetail:', error);
+      mainContent.innerHTML = `<p style="color:red; text-align:center;">${error.message}</p>`;
     }
-    return html;
   }
 }

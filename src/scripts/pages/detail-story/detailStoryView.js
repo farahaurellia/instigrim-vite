@@ -1,178 +1,132 @@
-import DetailStoryModel from "./detailStoryModel";
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import iconUrl from 'leaflet/dist/images/marker-icon.png';
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
+
+// Perbaiki masalah ikon default yang tidak muncul pada bundler seperti Vite
+const DefaultIcon = L.icon({
+    iconUrl,
+    iconRetinaUrl,
+    shadowUrl,
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+    tooltipAnchor: [16, -28],
+    shadowSize: [41, 41]
+});
+L.Marker.prototype.options.icon = DefaultIcon;
+
 
 export default class DetailStoryView {
-  #presenter;
-  #model;
   #map;
   #mapLayers;
   #currentBaseLayer;
 
-  constructor() {
-    this.#model = new DetailStoryModel();
-  }
-
-  setPresenter(presenter) {
-    this.#presenter = presenter;
-  }
-
-  async render({ id }) {
-    let story = null;
-    let locationDesc = '';
-    let errorMsg = '';
-
-    console.log('[DetailStoryView] render start');
-
-    try {
-      await this.#model.loadStoryDetail(id);
-      story = this.#model.getStory();
-
-      if (story.lat && story.lon) {
-        try {
-          locationDesc = await this.#model.getLocationDescription(story.lat, story.lon);
-        } catch {
-          locationDesc = '';
-        }
-      }
-    } catch (err) {
-      errorMsg = err?.message || 'Gagal memuat detail story.';
-    }
-
-    console.log('[DetailStoryView] render end');
+  async render(story) {
+    console.log('[DetailStoryView] render start with story:', story);
 
     return `
       <main>
-        <section class="detail-story" aria-labelledby="detail-story-title" style="max-width:500px;margin:auto;">
-          ${errorMsg ? `<p style="color:red;">${errorMsg}</p>` : `
-            <button id="backToHomeBtn" class="auth-btn" style="margin-bottom:18px;">&larr; Kembali ke Beranda</button>
-            <h2 id="detail-story-title">${story?.name || ''}</h2>
+        <section class="detail-story" aria-labelledby="detail-story-title">
+            <button id="backToHomeBtn" class="auth-btn" style="margin-bottom:18px; align-self: flex-start;">&larr; Kembali</button>
+            <h2 id="detail-story-title">${story?.name || 'Judul tidak tersedia'}</h2>
             <img 
               src="${story?.photoUrl || ''}" 
               alt="Foto cerita oleh ${story?.name || ''}" 
-              style="max-width:300px;display:block;margin-bottom:12px;" 
-              onerror="this.onerror=null;this.src='https://via.placeholder.com/300x200?text=No+Image';"
+              onerror="this.onerror=null;this.src='https://placehold.co/400x300/e2e8f0/64748b?text=Gambar+Rusak';"
             >
-            <p>${story?.description || ''}</p>
-            <small>Dibuat: ${story ? new Date(story.createdAt).toLocaleString() : ''}</small>
+            <p>${story?.description || 'Deskripsi tidak tersedia.'}</p>
+            <small>Dibuat pada: ${new Date(story.createdAt).toLocaleString('id-ID')}</small>
             <br>
             ${story?.lat && story?.lon ? `
               <div id="mapLayerControl" style="width:100%;margin:12px 0 8px 0;display:flex;gap:10px;align-items:center;">
                 <label for="mapLayerSelect" style="font-weight:bold;">Gaya Peta:</label>
-                <select id="mapLayerSelect" style="padding:6px 12px;border-radius:6px;">
+                <select id="mapLayerSelect" class="login-input" style="width: auto; padding: 8px;">
                   <option value="osm">Default</option>
-                  <option value="topo">OpenTopoMap</option>
-                  <option value="esri">Esri World Imagery</option>
+                  <option value="topo">Topografi</option>
+                  <option value="esri">Satelit</option>
                 </select>
               </div>
-              <div id="map-detail" style="height:250px;width:100%;margin-top:0;border-radius:8px;overflow:hidden;" aria-label="Lokasi pada peta"></div>
-              <small>Lokasi: ${locationDesc ? locationDesc : `${story.lat}, ${story.lon}`}</small>
-            ` : ''}
-          `}
+              <div class="map-detail-wrapper" style="width: 100%; position: relative;">
+                <div id="map-detail" style="height: 300px; width: 100%; border-radius: 10px;"></div>
+              </div>
+              <small id="location-description">Lokasi: ${story.lat}, ${story.lon}</small>
+            ` : '<p>Tidak ada data lokasi untuk cerita ini.</p>'}
         </section>
       </main>
     `;
   }
 
-  async afterRender({ id }) {
-    const backBtn = document.getElementById('backToHomeBtn');
-    if (backBtn) {
-      backBtn.addEventListener('click', () => {
-        window.location.hash = '/';
-      });
-    }
-
-    const story = this.#model.getStory();
-    console.log('[afterRender] story:', story);
-
+  async afterRender(story, location = {}) {
     console.log('[DetailStoryView] afterRender start');
 
-    if (story && story.lat && story.lon && window.L) {
-      await new Promise(resolve => setTimeout(resolve, 0));
-      const mapDiv = document.getElementById('map-detail');
-      console.log('[afterRender] mapDiv:', mapDiv);
-
-      if (mapDiv) {
-        if (this.#map) {
-          this.#map.remove();
-        }
-        this.#mapLayers = {
-          "osm": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors'
-          }),
-          "esri": L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
-            attribution: 'Tiles &copy; Esri'
-          }),
-          "topo": L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
-            attribution: 'OpenTopoMap contributors'
-          })
-        };
-        console.log('[afterRender] L:', L);
-        try {
-          this.#map = L.map(mapDiv, { attributionControl: false, zoomControl: false });
-          console.log('[afterRender] map initialized:', this.#map);
-          this.#mapLayers["osm"].addTo(this.#map);
-          console.log('[afterRender] OSM layer added');
-          this.#currentBaseLayer = this.#mapLayers["osm"];
-          this.#map.setView([parseFloat(story.lat), parseFloat(story.lon)], 13);
-          setTimeout(() => {
-            this.#map.invalidateSize();
-            console.log('[afterRender] map.invalidateSize() called');
-          }, 100);
-
-          // Popup marker
-          let popupLocation = 'Lokasi tidak diketahui';
-          try {
-            popupLocation = story.lat && story.lon ? (await this.#model.getLocationDescription(story.lat, story.lon)) : 'Lokasi tidak diketahui';
-          } catch (e) {
-            console.error('[DetailStoryView] getLocationDescription error:', e);
-          }
-
-          const popupHtml = `
-            <div style="max-width:220px;">
-              <img src="${story.photoUrl}" alt="Foto cerita" style="width:100%;border-radius:6px;object-fit:cover;margin-bottom:6px;" onerror="this.onerror=null;this.src='https://via.placeholder.com/220x140?text=No+Image';">
-              <div style="font-size:1em;margin-bottom:4px;">
-                <b>${popupLocation}</b>
-              </div>
-              <div style="font-size:0.97em;margin-bottom:4px;">
-                <em>${story.description ? story.description : ''}</em>
-              </div>
-              <div style="font-size:0.97em;">
-                <span style="color:#CA7842;font-weight:bold;">${story.name}</span>
-              </div>
-            </div>
-          `;
-
-          const marker = L.marker([parseFloat(story.lat), parseFloat(story.lon)]).addTo(this.#map);
-          marker.bindPopup(popupHtml).openPopup();
-
-          const mapLayerSelect = document.getElementById('mapLayerSelect');
-          if (mapLayerSelect) {
-            mapLayerSelect.addEventListener('change', (e) => {
-              const selected = e.target.value;
-              if (this.#currentBaseLayer) {
-                this.#map.removeLayer(this.#currentBaseLayer);
-              }
-              this.#mapLayers[selected].addTo(this.#map);
-              this.#currentBaseLayer = this.#mapLayers[selected];
-            });
-          }
-        } catch (e) {
-          console.error('[afterRender] Error initializing map:', e);
-        }
-      } else {
-        console.error('[afterRender] #map-detail element not found in DOM');
-      }
-    } else {
-      console.error('[afterRender] Data tidak lengkap atau Leaflet tidak tersedia', {
-        story,
-        lat: story?.lat,
-        lon: story?.lon,
-        L_exists: !!window.L
+    const backBtn = document.getElementById('backToHomeBtn');
+    if (backBtn) {
+      backBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.history.back();
       });
     }
 
-    console.log('[DetailStoryView] afterRender end');
+    if (story?.lat && story?.lon) {
+      const mapContainer = document.getElementById('map-detail');
+      if (mapContainer && !mapContainer._leaflet_id) {
+        this.#map = L.map(mapContainer, {
+          center: [story.lat, story.lon],
+          zoom: 15,
+        });
+
+        // Definisikan semua lapisan peta
+        this.#mapLayers = {
+          osm: L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          }),
+          topo: L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+            attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | Map style: &copy; <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+          }),
+          esri: L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+          })
+        };
+        
+        // Atur lapisan default
+        this.#currentBaseLayer = this.#mapLayers.osm;
+        this.#map.addLayer(this.#currentBaseLayer);
+
+        // Tambahkan event listener untuk mengganti lapisan peta
+        const layerSelect = document.getElementById('mapLayerSelect');
+        layerSelect.addEventListener('change', (e) => {
+          const selectedLayer = e.target.value;
+          if (this.#mapLayers[selectedLayer]) {
+            this.#map.removeLayer(this.#currentBaseLayer);
+            this.#currentBaseLayer = this.#mapLayers[selectedLayer];
+            this.#map.addLayer(this.#currentBaseLayer);
+          }
+        });
+
+        const { city, country } = location;
+        const locationText = city && country ? `${city}, ${country}` : (city || country || '');
+        
+        const locElement = document.getElementById('location-description');
+        if (locElement && locationText) {
+            locElement.innerText = `Lokasi: ${locationText}`;
+        }
+
+        L.marker([story.lat, story.lon]).addTo(this.#map)
+          .bindPopup(`
+            <div style="width:150px; font-family: 'Poppins', sans-serif;">
+              <img src="${story.photoUrl}" alt="${story.name}" style="width:100%; height:100px; border-radius:4px; margin-bottom:8px; object-fit: cover;">
+              <b style="font-size: 1rem; display: block; text-align: center;">${story.name}</b><br>
+              <i style="font-size:0.8rem; display: block; text-align: center; color: #555;">${locationText}</i>
+            </div>
+          `)
+          .openPopup();
+
+        setTimeout(() => {
+          this.#map.invalidateSize();
+        }, 100);
+      }
+    }
   }
-  // Hapus getLocationDescription dari view, sudah di model
 }

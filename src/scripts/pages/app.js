@@ -1,5 +1,6 @@
 import routes from '../routes/routes';
-import { getActiveRoute } from '../routes/url-parser';
+// Perbarui impor untuk menyertakan parseActivePathname
+import { getActiveRoute, parseActivePathname } from '../routes/url-parser';
 
 class App {
   #content = null;
@@ -38,22 +39,26 @@ class App {
   async renderPage() {
     const url = getActiveRoute();
     const page = routes[url];
+    // Tampilkan loading state yang lebih baik
+    this.#content.innerHTML = '<div style="text-align:center; padding: 2rem;">Memuat Halaman...</div>'; 
 
-    // Cek jika page punya presenter (misal DetailStoryView)
     if (page && typeof page.showDetail === 'function') {
-      // Ambil id dari url hash: /stories/:id
-      const hash = window.location.hash.slice(1);
-      const id = hash.split('/')[2];
-      this.#content.innerHTML = '';
-      const detailElement = await page.showDetail(id);
-      if (detailElement instanceof HTMLElement) {
-        this.#content.appendChild(detailElement);
-      } else if (typeof detailElement === 'string') {
-        this.#content.innerHTML = detailElement;
-      }
-    } else {
-      this.#content.innerHTML = await page.render();
+      // Dapatkan ID dari URL
+      const { id } = parseActivePathname();
+      
+      // PERUBAHAN UTAMA:
+      // Panggil presenter dan berikan elemen kontennya.
+      // Presenter sekarang bertanggung jawab penuh untuk me-render ke dalam elemen ini.
+      // Kita tidak perlu lagi menangani nilai kembaliannya.
+      await page.showDetail(this.#content, id);
+
+    } else if (page) {
+      // Alur untuk halaman biasa (Beranda, Login, dll.) tetap sama
+      const renderedContent = await page.render();
+      this.#content.innerHTML = renderedContent;
       await page.afterRender();
+    } else {
+        this.#content.innerHTML = '<p>Halaman tidak ditemukan.</p>';
     }
   }
 }
