@@ -11,7 +11,7 @@ export default class DetailStoryPresenter {
       token = user.token;
     }
 
-    return await this.view.render({
+    const html = await this.view.render({
       id: storyId,
       model: {
         getDetailStory: async ({ id, token }) => {
@@ -25,5 +25,12 @@ export default class DetailStoryPresenter {
       },
       token
     });
+
+    const container = document.getElementById('main-content');
+    if (container) {
+      container.innerHTML = html;
+      await this.view.afterRender({ id: storyId });
+    }
+    return html;
   }
 }
