@@ -86,4 +86,24 @@ export default class AddStoryModel {
       valid: true
     };
   }
+
+  async getLocationDescription(lat, lng) {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
+      );
+      const data = await response.json();
+      const city = data.address.city || data.address.town || data.address.village || '';
+      const state = data.address.state || '';
+      return city && state
+        ? `${city}, ${state}`
+        : (city || state || 'Lokasi tidak diketahui');
+    } catch {
+      return 'Lokasi tidak diketahui';
+    }
+  }
+
+  navigateTo(path) {
+    window.dispatchEvent(new CustomEvent('navigate', { detail: { path } }));
+  }
 }

@@ -5,10 +5,12 @@ import 'leaflet/dist/leaflet.css';
 
 export default class HomeView {
   #presenter;
+  #model;
 
   constructor() {
+    this.#model = new HomeModel();
     this.#presenter = new HomePresenter({
-      model: new HomeModel(),
+      model: this.#model,
       view: this
     });
   }
@@ -18,12 +20,12 @@ export default class HomeView {
   }
 
   async render() {
-    const user = localStorage.getItem('user');
+    const user = this.#model.getUserData();
     const isLoggedIn = user !== null;
     let nama = '';
     if (isLoggedIn) {
       try {
-        nama = JSON.parse(user).name || '';
+        nama = user.name || '';
       } catch {
         nama = '';
       }

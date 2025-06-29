@@ -18,9 +18,9 @@ export default class LoginView {
   }
 
   async render() {
-    const user = localStorage.getItem('user');
+    const user = this.#model.getUserData();
     const isLoggedIn = user !== null;
-    const nama  = isLoggedIn ? JSON.parse(user).name : '';
+    const nama  = isLoggedIn ? user.name : '';
 
     return `
       <main id="main-content" class="login-sec" aria-label="Login Page">

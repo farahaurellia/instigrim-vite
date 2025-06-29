@@ -21,4 +21,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   };
 
   window.addEventListener('hashchange', handleRouteChange);
+  window.addEventListener('navigate', (e) => {
+    let path = e.detail.path;
+    if (!path.startsWith('#')) path = `#${path}`;
+    window.location.hash = path;
+  });
 });

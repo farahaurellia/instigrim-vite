@@ -35,7 +35,7 @@ export default class AddStoryView {
   }
 
   async render() {
-    const user = localStorage.getItem('user');
+    const user = this.#model.getUserData();
     const isGuest = !user;
 
     return `
@@ -149,13 +149,7 @@ export default class AddStoryView {
 
         let desc = '';
         try {
-          const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json`
-          );
-          const data = await response.json();
-          const city = data.address.city || data.address.town || data.address.village || '';
-          const state = data.address.state || '';
-          desc = city && state ? `${city}, ${state}` : (city || state || 'Lokasi tidak diketahui');
+          desc = await this.#model.getLocationDescription(lat, lng);
         } catch {
           desc = 'Lokasi tidak diketahui';
         }

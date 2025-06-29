@@ -5,6 +5,10 @@ export default class LoginModel {
     //
   }
 
+  getUserData() {
+    return JSON.parse(localStorage.getItem('user'));
+  }
+
   async login(email, password) {
     try {
       const responseData = await Api.login(email, password);
@@ -21,5 +25,9 @@ export default class LoginModel {
       name: userData.name,
       token: userData.token
     }));
+  }
+
+  removeUserData() {
+    localStorage.removeItem('user');
   }
 }

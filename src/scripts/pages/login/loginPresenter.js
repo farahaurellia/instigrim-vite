@@ -34,7 +34,7 @@ export default class LoginPresenter {
   }
 
   async handleLogout() {
-    localStorage.removeItem('user');
+    this.#model.removeUserData();
     this.#view.redirectToHome();
   }
 }

@@ -37,17 +37,17 @@ export default class AddStoryPresenter {
         data.append('lon', formData.lon);
       }
 
-      const user = localStorage.getItem('user');
+      const user = this.#model.getUserData();
       let result;
-      if (user && JSON.parse(user).token) {
-        result = await this.#model.addStory(data, JSON.parse(user).token);
+      if (user && user.token) {
+        result = await this.#model.addStory(data, user.token);
       } else {
         result = await this.#model.addStoryasGuest(data);
       }
       
       if (result.success) {
         this.#view.showSuccess('Story added successfully');
-        window.location.hash = '#/';
+        this.#model.navigateTo('/'); 
       } else {
         this.#view.showError(result.message);
         this.#view.showLoading(false);
