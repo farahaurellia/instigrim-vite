@@ -2,7 +2,7 @@
   --coklat-tua: #4B352A;
   --oranye: #CA7842;
   --hijau-muda: #B2CD9C;
-  --kuning-pucat: #FOF2BD;
+  --kuning-pucat: #F0F2BD;
 }
 
 * {
@@ -203,7 +203,7 @@ header {
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-height: 4.5em; /* 3 lines x 1.5em line-height */
+  max-height: 4.5em;
   line-height: 1.5em;
   margin-bottom: 8px;
 }
