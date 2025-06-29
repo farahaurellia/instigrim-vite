@@ -870,3 +870,38 @@ button i {
   font-weight: bold;
   letter-spacing: 0.5px;
 }
+
+/* Modern Minimalist Footer */
+.footer {
+  background: linear-gradient(90deg, #23272f 0%, #4B352A 100%);
+  color: #fff;
+  text-align: center;
+  padding: 1.5rem 0;
+  border-radius: 18px 18px 0 0;
+  box-shadow: 0 -2px 24px rgba(75,53,42,0.07);
+  font-size: 1.08rem;
+  letter-spacing: 0.5px;
+  margin-top: 32px;
+}
+
+.footer .container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.footer p {
+  margin: 0;
+  opacity: 0.85;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+}
+
+@media (max-width: 700px) {
+  .footer {
+    border-radius: 0;
+    font-size: 0.98rem;
+    padding: 1rem 0;
+  }
+}
