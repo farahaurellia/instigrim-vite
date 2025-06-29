@@ -107,12 +107,12 @@ export default class HomeView {
     storiesList.querySelectorAll('.story-card').forEach(card => {
       card.addEventListener('click', () => {
         const storyId = card.getAttribute('data-story-id');
-        window.location.hash = `/stories/${storyId}`;
+        this.#model.navigateTo(`/stories/${storyId}`);
       });
       card.addEventListener('keypress', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           const storyId = card.getAttribute('data-story-id');
-          window.location.hash = `/stories/${storyId}`;
+          this.#model.navigateTo(`/stories/${storyId}`);
         }
       });
     });

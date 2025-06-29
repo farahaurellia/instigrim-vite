@@ -114,6 +114,6 @@ export default class LoginView {
   }
 
   redirectToHome() {
-    window.location.hash = '#';
+    this.#model.navigateTo('/');
   }
 }

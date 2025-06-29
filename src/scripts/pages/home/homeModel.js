@@ -49,5 +49,7 @@ export default class HomeModel {
   getStories() {
     return this.stories;
   }
-
+  navigateTo(path) {
+    window.dispatchEvent(new CustomEvent('navigate', { detail: { path } }));
+  }
 }

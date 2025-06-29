@@ -93,6 +93,6 @@ export default class RegisterView {
   }
 
   redirectToHome() {
-    window.location.hash = '#/';
+    this.#model.navigateTo('/');
   }
 }

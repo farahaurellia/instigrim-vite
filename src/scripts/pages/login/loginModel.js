@@ -30,4 +30,8 @@ export default class LoginModel {
   removeUserData() {
     localStorage.removeItem('user');
   }
+
+  navigateTo(path) {
+    window.dispatchEvent(new CustomEvent('navigate', { detail: { path } }));
+  }
 }

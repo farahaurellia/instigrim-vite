@@ -21,4 +21,8 @@ export default class RegisterModel {
       token: userData.token
     }));
   }
+
+  navigateTo(path) {
+    window.dispatchEvent(new CustomEvent('navigate', { detail: { path } }));
+  }
 } 
