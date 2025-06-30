@@ -32,7 +32,16 @@ self.addEventListener('activate', (event) => {
 // Fetch event: serve from cache, fallback ke network
 self.addEventListener('fetch', (event) => {
   event.respondWith(
-    caches.match(event.request).then((response) => response || fetch(event.request))
+    caches.match(event.request).then((response) => {
+      // Jika ada di cache, kembalikan dari cache
+      if (response) return response;
+      // Jika tidak ada di cache, coba fetch dari network
+      return fetch(event.request).catch(() => {
+        // Jika fetch gagal (misal offline), bisa kembalikan fallback response di sini
+        // Contoh: return caches.match('/offline.html');
+        return new Response('Offline or resource not found', { status: 503, statusText: 'Service Unavailable' });
+      });
+    })
   );
 });
 

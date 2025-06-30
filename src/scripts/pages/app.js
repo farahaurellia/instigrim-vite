@@ -38,60 +38,72 @@ class App {
   }
 
   async #setupPushNotification() {
+    console.log('setupPushNotification start');
     const notifNavList = document.getElementById('notif-nav-list');
-    if (!notifNavList) return;
+    if (!notifNavList) {
+      console.log('notifNavList not found');
+      return;
+    }
 
-    // Cek status subscribe
+    console.log('before isCurrentPushSubscriptionAvailable');
     const isSubscribed = await isCurrentPushSubscriptionAvailable();
+    console.log('after isCurrentPushSubscriptionAvailable', isSubscribed);
 
-    // Render tombol sesuai status
     notifNavList.innerHTML = isSubscribed
       ? UnsubscribeNotificationBtn()
       : SubscribeNotificationBtn();
 
-    // Event handler tombol subscribe
     const subscribeBtn = document.getElementById('subscribe-notif-btn');
     if (subscribeBtn) {
       subscribeBtn.addEventListener('click', async () => {
         const success = await subscribeToNotification();
         if (success) {
           notifNavList.innerHTML = UnsubscribeNotificationBtn();
-          this.#setupPushNotification(); // refresh event handler
+          this.#setupPushNotification();
         }
       });
     }
 
-    // Event handler tombol unsubscribe
     const unsubscribeBtn = document.getElementById('unsubscribe-notif-btn');
     if (unsubscribeBtn) {
       unsubscribeBtn.addEventListener('click', async () => {
         const success = await unsubscribeFromNotification();
         if (success) {
           notifNavList.innerHTML = SubscribeNotificationBtn();
-          this.#setupPushNotification(); // refresh event handler
+          this.#setupPushNotification();
         }
       });
     }
+    console.log('setupPushNotification end');
   }
 
   async renderPage() {
+    console.log('renderPage start');
     const url = getActiveRoute();
     const page = routes[url];
     this.#content.innerHTML = '<div style="text-align:center; padding: 2rem;">Memuat Halaman...</div>';
 
     if (page && typeof page.showDetail === 'function') {
       const { id } = parseActivePathname();
+      console.log('before showDetail');
       await page.showDetail(this.#content, id);
+      console.log('after showDetail');
     } else if (page) {
+      console.log('before render');
       const renderedContent = await page.render();
+      console.log('after render');
       this.#content.innerHTML = renderedContent;
+      console.log('before afterRender');
       await page.afterRender();
+      console.log('after afterRender');
     } else {
       this.#content.innerHTML = '<p>Halaman tidak ditemukan.</p>';
     }
 
-    // Pastikan tombol notif di-refresh setiap renderPage
+    console.log('before setupPushNotification');
     await this.#setupPushNotification();
+    console.log('after setupPushNotification');
+    console.log('renderPage end');
   }
 }
 
