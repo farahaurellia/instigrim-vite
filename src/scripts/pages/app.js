@@ -1,6 +1,6 @@
 import routes from '../routes/routes';
 import { getActiveRoute, parseActivePathname } from '../routes/url-parser';
-import { isCurrentPushSubscriptionAvailable, subscribeToNotification, unsubscribeFromNotification } from '../utils/notification-hub';
+import { isCurrentPushSubscriptionAvailable, subscribeToNotification, unsubscribeFromNotification, notificationRequestPermission } from '../utils/notification-hub';
 import { SubscribeNotificationBtn, UnsubscribeNotificationBtn } from '../notifBtn.js';
 
 class App {
@@ -56,6 +56,9 @@ class App {
     const subscribeBtn = document.getElementById('subscribe-notif-btn');
     if (subscribeBtn) {
       subscribeBtn.addEventListener('click', async () => {
+        const granted = await notificationRequestPermission();
+        if (!granted) return; // Stop jika user tidak memberi izin
+
         const success = await subscribeToNotification();
         if (success) {
           notifNavList.innerHTML = UnsubscribeNotificationBtn();
