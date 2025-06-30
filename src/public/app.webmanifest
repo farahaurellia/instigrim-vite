@@ -1,0 +1,24 @@
+{
+  "name": "JejakKaki",
+  "short_name": "JejakKaki",
+  "description": "Aplikasi Sosial Media untuk berbagi cerita perjalanan dan pengalaman.",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#F0F2BD",
+  "theme_color": "#4B352A",
+  "icons": [
+    {
+      "src": "/images/logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "orientation": "portrait",
+  "scope": "/",
+  "lang": "en"
+}
