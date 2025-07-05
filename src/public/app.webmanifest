@@ -17,6 +17,27 @@
       "sizes": "512x512",
       "type": "image/png"
     }
+    
+  ],
+  "screenshots": [
+    {
+      "src": "src/images/icons/screenshot1.png",
+      "sizes": "640x480",
+      "type": "image/png",
+      "label": "Tampilan Beranda"
+    },
+    {
+      "src": "src/images/icons/screenshot2.png",
+      "sizes": "640x480",
+      "type": "image/png",
+      "label": "Tampilan Profil"
+    },
+    {
+      "src": "src/images/icons/screenshot3.png",
+      "sizes": "640x480",
+      "type": "image/png",
+      "label": "Tampilan Peta"
+    }
   ],
   "orientation": "portrait",
   "scope": "/",

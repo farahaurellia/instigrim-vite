@@ -905,3 +905,30 @@ button i {
     padding: 1rem 0;
   }
 }
+
+/* View Transitions API */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 350ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+::view-transition-old(root) {
+  opacity: 1;
+  animation-name: fadeOutView;
+}
+
+::view-transition-new(root) {
+  opacity: 0;
+  animation-name: fadeInView;
+}
+
+@keyframes fadeOutView {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes fadeInView {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
