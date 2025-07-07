@@ -60,7 +60,7 @@ export default class HomeView {
     return `
       <main>
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:18px;">
-          <h1 style="font-family: 'Caveat', cursive; font-size: 2.2rem; color: #333; margin-left:20px;">
+          <h1 style="font-family: 'Caveat', cursive; font-size: 2.2rem; color: #333; margin-left:80px;">
             ${
               isLoggedIn && nama
                 ? `Halo, <span class="home-username">${nama}</span>! Jalan-jalan kemana hari ini?`
@@ -106,8 +106,11 @@ export default class HomeView {
 
     storiesList.querySelectorAll('.story-card').forEach(card => {
       card.addEventListener('click', () => {
+        console.log('Card clicked:', card);
         const storyId = card.getAttribute('data-story-id');
+        console.log('Navigating to story ID:', storyId);
         this.#model.navigateTo(`/stories/${storyId}`);
+        console.log('Navigation triggered');
       });
       card.addEventListener('keypress', (e) => {
         if (e.key === 'Enter' || e.key === ' ') {

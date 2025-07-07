@@ -50,6 +50,7 @@ export default class HomeModel {
     return this.stories;
   }
   navigateTo(path) {
+    console.log('Navigating to:', path);
     window.dispatchEvent(new CustomEvent('navigate', { detail: { path } }));
   }
 }

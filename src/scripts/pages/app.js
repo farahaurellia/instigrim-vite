@@ -1,4 +1,4 @@
-import routes from '../routes/routes';
+import { getPage } from '../routes/routes';
 import { getActiveRoute, parseActivePathname } from '../routes/url-parser';
 import { isCurrentPushSubscriptionAvailable, subscribeToNotification, unsubscribeFromNotification, notificationRequestPermission } from '../utils/notification-hub';
 import { SubscribeNotificationBtn, UnsubscribeNotificationBtn } from '../notifBtn.js';
@@ -83,24 +83,45 @@ class App {
   async renderPage() {
     console.log('renderPage start');
     const url = getActiveRoute();
-    const page = routes[url];
+    console.log('Active URL:', url);
+    const page = getPage(url);
+    console.log('Page found:', page);
+
+    // Tampilkan indikator loading sementara
     this.#content.innerHTML = '<div style="text-align:center; padding: 2rem;">Memuat Halaman...</div>';
 
-    if (page && typeof page.showDetail === 'function') {
-      const { id } = parseActivePathname();
-      console.log('before showDetail');
-      await page.showDetail(this.#content, id);
-      console.log('after showDetail');
-    } else if (page) {
-      console.log('before render');
-      const renderedContent = await page.render();
-      console.log('after render');
-      this.#content.innerHTML = renderedContent;
-      console.log('before afterRender');
-      await page.afterRender();
-      console.log('after afterRender');
-    } else {
-      this.#content.innerHTML = '<p>Halaman tidak ditemukan.</p>';
+    // Logika render halaman
+    try {
+      if (typeof page.showDetail === 'function') {
+        // Ini adalah case untuk halaman detail (misalnya, /detail/:id)
+        const { id } = parseActivePathname();
+        console.log('before showDetail');
+        await page.showDetail(this.#content, id);
+        console.log('after showDetail');
+      } else {
+        // Ini adalah case untuk halaman biasa atau NotFoundView
+        console.log('before render');
+        const renderedContent = await page.render();
+        console.log('after render');
+        this.#content.innerHTML = renderedContent;
+        
+        // Panggil afterRender jika ada
+        if (page.afterRender) {
+          console.log('before afterRender');
+          await page.afterRender();
+          console.log('after afterRender');
+        }
+      }
+    } catch (error) {
+      console.error('Error rendering page:', error);
+      // Fallback jika ada error saat merender halaman (misalnya, masalah API)
+      this.#content.innerHTML = `
+        <div class="error-display" style="text-align:center; padding: 2rem; color: red;">
+          <h2>Terjadi Kesalahan!</h2>
+          <p>Maaf, tidak dapat memuat halaman ini.</p>
+          <button onclick="window.location.reload()">Coba Lagi</button>
+        </div>
+      `;
     }
 
     console.log('before setupPushNotification');
