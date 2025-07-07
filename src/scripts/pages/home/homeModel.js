@@ -51,6 +51,6 @@ export default class HomeModel {
   }
   navigateTo(path) {
     console.log('Navigating to:', path);
-    window.dispatchEvent(new CustomEvent('navigate', { detail: { path } }));
+    window.location.hash = path; 
   }
 }

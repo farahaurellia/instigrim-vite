@@ -3,6 +3,7 @@ import 'leaflet/dist/leaflet.css';
 import iconUrl from 'leaflet/dist/images/marker-icon.png';
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
+import DetailStoryModel from './detailStoryModel.js';
 
 // Perbaiki masalah ikon default yang tidak muncul pada bundler seperti Vite
 const DefaultIcon = L.icon({
@@ -22,6 +23,12 @@ export default class DetailStoryView {
   #map;
   #mapLayers;
   #currentBaseLayer;
+  #model;
+
+
+  constructor() {
+    this.#model = new DetailStoryModel();
+  }
 
   async render(story) {
     console.log('[DetailStoryView] render start with story:', story);
@@ -65,7 +72,7 @@ export default class DetailStoryView {
     if (backBtn) {
       backBtn.addEventListener('click', (e) => {
         e.preventDefault();
-        window.history.back();
+        this.#model.backToHome();
       });
     }
 

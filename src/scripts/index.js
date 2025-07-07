@@ -7,6 +7,10 @@ const app = new App({
   navigationDrawer: document.querySelector('#navigation-drawer'),
 });
 
+window.addEventListener('load', () => {
+  app.init();
+});
+
 document.addEventListener('DOMContentLoaded', () => {
   if (document.startViewTransition) {
     document.startViewTransition(() => app.renderPage());
