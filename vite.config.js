@@ -5,7 +5,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 // https://vitejs.dev/config/
 export default defineConfig({
   root: resolve(__dirname, 'src'),
-  publicDir: resolve(__dirname, 'src', 'public'),
+  publicDir: resolve(__dirname, 'src', 'public'), // Files here are copied directly to dist/
   build: {
     outDir: resolve(__dirname, 'dist'),
     emptyOutDir: true,
@@ -19,34 +19,29 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       
-      // 'includeAssets' harus disesuaikan dengan path ikon dan screenshots Anda
-      // yang berada di 'publicDir' atau di root 'src' jika tidak melalui publicDir
-      // Jika 'images' ada di dalam 'src/public', maka 'includeAssets' akan tetap '/images/...'
-      // Jika 'screenshots' ada di dalam 'src/images/icons', pastikan path relatifnya benar dari root build
+      // 'includeAssets' should be correct here if your files are in src/public/images/icons/screenshots/
       includeAssets: [
-        'favicon.ico', 'robots.txt', // Contoh aset lain yang mungkin di public
-        // Ikon dari manifest
+        'favicon.ico', 'robots.txt',
         '/images/logo-192.png',
         '/images/logo-512.png',
-        // Screenshots dari manifest
-        'images/icons/screenshots/Screenshot1.png', // Sesuaikan path ini jika mereka tidak di root publicDir
-        'images/icons/screenshots/Screenshot2.png', // Contoh: jika mereka di src/public/images/icons,
-        'images/icons/screenshots/Screenshot3.png'  // maka path di sini harus 'images/icons/screenshotX.png'
-                                        // tanpa '/' di awal jika 'publicDir' adalah root untuk aset tersebut
+        // ⭐ Ensure these paths match the actual location in your 'src/public' folder ⭐
+        // And use the EXACT filename (case-sensitive)
+        'images/icons/screenshots/Screenshot1.png',
+        'images/icons/screenshots/Screenshot2.png',
+        'images/icons/screenshots/Screenshot3.png',
       ],
       
-      // ------ Konfigurasi manifest dipindahkan ke sini ------
       manifest: {
         name: "JejakKaki",
         short_name: "JejakKaki",
         description: "Aplikasi Sosial Media untuk berbagi cerita perjalanan dan pengalaman.",
-        start_url: "/index.html", // Pastikan ini mengarah ke file HTML utama Anda di direktori build
+        start_url: "/index.html",
         display: "standalone",
         background_color: "#F0F2BD",
         theme_color: "#4B352A",
         icons: [
           {
-            src: "/images/logo-192.png", // Path ini relatif terhadap 'start_url' atau root aplikasi
+            src: "/images/logo-192.png",
             sizes: "192x192",
             type: "image/png"
           },
@@ -58,19 +53,21 @@ export default defineConfig({
         ],
         screenshots: [
           {
-            src: "images/icons/screenshot1.png", // Path ini harus relatif dari root build
+            // ⭐ FIX THESE PATHS: Add leading '/' to make them root-relative ⭐
+            // Assumes your images are in 'src/public/images/icons/screenshots/'
+            src: "/images/icons/screenshots/Screenshot1.png",
             sizes: "640x480",
             type: "image/png",
             label: "Tampilan Beranda"
           },
           {
-            src: "images/icons/screenshot2.png",
+            src: "/images/icons/screenshots/Screenshot2.png",
             sizes: "640x480",
             type: "image/png",
             label: "Tampilan Profil"
           },
           {
-            src: "images/icons/screenshot3.png",
+            src: "/images/icons/screenshots/Screenshot3.png",
             sizes: "640x480",
             type: "image/png",
             label: "Tampilan Peta"
@@ -80,18 +77,16 @@ export default defineConfig({
         scope: "/",
         lang: "en"
       },
-      // ----------------------------------------------------
-
+      filename: 'manifest.webmanifest',
       workbox: {
-        // Pastikan globPatterns mencakup semua aset yang Anda ingin pre-cache,
-        // termasuk yang ada di `publicDir` dan dihasilkan oleh Vite.
         globPatterns: [
-            '**/*.{js,css,html,ico,png,svg,jpg,json}', // Ini akan mencakup ikon dan screenshots
-            'images/icons/screenshots/*.png' // eksplisit untuk screenshots
+            '**/*.{js,css,html,ico,png,svg,jpg,json}',
+            // Ensure this glob pattern correctly matches the files' location in 'dist'
+            // If screenshots are in 'dist/images/icons/screenshots/', this is correct.
+            'images/icons/screenshots/*.png'
         ],
         runtimeCaching: [
-          // Tambahkan strategi caching sesuai kebutuhan Anda
-          // Misalnya untuk API, gambar dari CDN, atau aset eksternal lainnya
+          // ... (your runtime caching strategies) ...
         ],
       },
     }),

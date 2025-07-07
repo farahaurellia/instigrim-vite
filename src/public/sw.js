@@ -1,12 +1,13 @@
 // sw.js
 
 const CACHE_NAME = 'my-app-cache-v1';
-const API_CACHE_NAME = 'api-cache-v1'; // Cache terpisah untuk respons API
-const IMAGE_CACHE_NAME = 'image-cache-v1'; // Cache untuk gambar cerita
+const API_CACHE_NAME = 'api-cache-v1';
+const IMAGE_CACHE_NAME = 'image-cache-v1';
 
 const urlsToCache = [
   '/',
   '/index.html',
+  '/manifest.webmanifest', // Pastikan ini di sini
   '/styles/styles.css',
   '/scripts/index.js',
   '/scripts/app.js',
@@ -18,14 +19,13 @@ const urlsToCache = [
   '/images/logo-512.png',
   '/favicon.ico',
   '/404.html',
-  // ⭐ TAMBAHKAN PATH UNTUK SETIAP VIEW DI SINI ⭐
-  '/pages/home/homeView.js', // Penting agar home bisa diakses
+  // PATH UNTUK SETIAP VIEW DAN DEPENDENSI JS/CSS MEREKA
+  '/pages/home/homeView.js',
   '/pages/login/loginView.js',
   '/pages/register/registerView.js',
   '/pages/add-story/addStoryView.js',
   '/pages/not-found/notFoundView.js',
-  '/pages/saved-stories/savedStoriesView.js', // Jika ada halaman saved stories
-  // Dan semua Presenter/Model yang diimpor langsung oleh View tersebut
+  '/pages/saved-stories/savedStoriesView.js',
   '/pages/login/loginModel.js',
   '/pages/login/loginPresenter.js',
   '/pages/register/registerModel.js',
@@ -34,11 +34,17 @@ const urlsToCache = [
   '/pages/add-story/addStoryPresenter.js',
   '/pages/saved-stories/savedStoriesModel.js',
   '/pages/saved-stories/savedStoriesPresenter.js',
-  // Untuk DetailStoryView, mungkin tidak perlu pre-cache langsung jika datanya dinamis,
-  // tapi JavaScript untuk View/Presenter-nya tetap perlu:
   '/pages/detail-story/detailStoryView.js',
   '/pages/detail-story/detailStoryModel.js',
   '/pages/detail-story/detailStoryPresenter.js',
+  '/images/placeholder.png', // Contoh: jika Anda punya placeholder, sesuaikan nama
+  '/styles/auth.css', // Contoh: tambahkan semua file CSS Anda
+  '/styles/detailStory.css',
+  '/styles/savedStories.css',
+  '/styles/notFound.css',
+  // Tambahkan juga semua aset gambar, font, atau file lain yang dibutuhkan app shell
+  // yang mungkin tidak melalui "image" destination, misalnya ikon dari feather-icons
+  // '/scripts/feather-icons.js' // Jika Anda mengimpor ini atau serupa.
 ];
 
 // Install event
@@ -46,9 +52,33 @@ self.addEventListener('install', (event) => {
   console.log('Service worker is installing...');
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(urlsToCache).catch(error => {
-        console.error('Failed to cache some URLs during install:', error);
+      console.log('Caching App Shell assets...');
+      // ⭐ PENTING: Iterasi melalui urlsToCache dan fetch/put secara manual
+      // untuk mengatasi query parameters Vite.
+      const cachePromises = urlsToCache.map(url => {
+        const requestUrl = new URL(url, self.location.origin);
+        requestUrl.search = ''; // Hapus query parameters untuk URL yang akan di-cache
+
+        // Buat Request baru dengan URL yang bersih
+        const cleanRequest = new Request(requestUrl.toString());
+
+        return fetch(cleanRequest) // Ambil aset dengan URL bersih dari jaringan
+          .then(response => {
+            if (!response.ok) {
+              console.warn(`Failed to fetch ${url} for caching: ${response.status} ${response.statusText}`);
+              return null; // Jangan cache respons yang gagal
+            }
+            // Simpan respons ke cache dengan Request yang bersih
+            return cache.put(cleanRequest, response.clone());
+          })
+          .catch(error => {
+            console.error(`Error caching ${url}:`, error);
+            return null;
+          });
       });
+      return Promise.all(cachePromises.filter(p => p !== null)); // Tunggu semua selesai
+    }).catch(installError => {
+        console.error('Service Worker installation failed during open/add:', installError);
     })
   );
   self.skipWaiting();
@@ -56,6 +86,7 @@ self.addEventListener('install', (event) => {
 
 // Activate event (tetap sama)
 self.addEventListener('activate', (event) => {
+  console.log('Service worker is activating...');
   event.waitUntil(
     caches.keys().then((cacheNames) =>
       Promise.all(
@@ -66,45 +97,38 @@ self.addEventListener('activate', (event) => {
     )
   );
   self.clients.claim();
+  console.log('Service worker activated, old caches cleared.');
 });
 
-// ⭐ MODIFIKASI PENTING PADA FETCH EVENT ⭐
+// ⭐ MODIFIKASI KRITIKAL PADA FETCH EVENT ⭐
 self.addEventListener('fetch', (event) => {
   const requestUrl = new URL(event.request.url);
 
-  // 1. Tangani permintaan ke API Anda
-  // Asumsi URL API Anda mengandung '/stories' atau '/auth'
+  // 1. Tangani permintaan ke API Anda (Network First)
   if (requestUrl.origin === self.location.origin && requestUrl.pathname.includes('/stories')) {
-    // Strategi Network First for API: Coba dari jaringan, jika gagal, coba dari cache.
-    // Ini cocok untuk data yang sering berubah.
     event.respondWith(
       caches.open(API_CACHE_NAME).then(async (cache) => {
         try {
           const response = await fetch(event.request);
-          // Hanya cache respons 200 OK
           if (response.status === 200) {
-            cache.put(event.request, response.clone()); // Simpan respons ke cache
+            cache.put(event.request, response.clone());
           }
           return response;
         } catch (error) {
-          // Jika gagal dari jaringan (offline atau error), coba dari cache
           console.log('API request failed, falling back to cache:', error);
           const cachedResponse = await cache.match(event.request);
           if (cachedResponse) {
             return cachedResponse;
           }
-          // Jika tidak ada di cache dan offline, kembalikan fallback offline
           return new Response('API data not available offline', { status: 503, statusText: 'Service Unavailable' });
         }
       })
     );
-    return; // Hentikan pemrosesan selanjutnya
+    return;
   }
 
-  // 2. Tangani permintaan gambar (misalnya photoUrl dari cerita)
+  // 2. Tangani permintaan gambar (Cache First)
   if (event.request.destination === 'image') {
-    // Strategi Cache First for Images: Coba dari cache dulu, jika tidak ada, ambil dari jaringan.
-    // Ini cocok untuk gambar yang jarang berubah dan ingin ditampilkan cepat.
     event.respondWith(
       caches.open(IMAGE_CACHE_NAME).then(async (cache) => {
         const cachedResponse = await cache.match(event.request);
@@ -117,38 +141,49 @@ self.addEventListener('fetch', (event) => {
         }
         return networkResponse;
       }).catch(() => {
-        // Fallback gambar default jika offline dan tidak ada di cache
-        return caches.match('/images/placeholder.png'); // Pastikan Anda memiliki gambar placeholder
+        return caches.match('/images/placeholder.png'); // Pastikan ini ada
       })
     );
-    return; // Hentikan pemrosesan selanjutnya
+    return;
   }
 
   // 3. Tangani permintaan navigasi (HTML pages) dan aset statis lainnya
-  // Strategi Cache Only for Pre-cached Assets (or Cache First, but simpler for pre-cached)
-  // Atau Network First dengan fallback ke offline page untuk navigasi
+  const cleanedRequestUrl = new URL(event.request.url);
+  cleanedRequestUrl.search = ''; // Hapus query parameters untuk pencarian cache
+
   event.respondWith(
-    caches.match(event.request).then((response) => {
+    caches.match(cleanedRequestUrl.toString()).then(async (response) => { // Gunakan URL bersih untuk matching
       if (response) {
-        // Perbaikan Content-Type untuk CSS dari cache (seperti yang sudah ada)
-        if (requestUrl.pathname.includes('/styles.css') && response.headers.get('Content-Type') !== 'text/css') {
-          console.warn('Correcting Content-Type for styles.css from cache!');
-          const headers = new Headers(response.headers);
+        // ⭐ BAGIAN PENTING: Perbaiki Content-Type saat melayani dari cache ⭐
+        const headers = new Headers(response.headers); // Dapatkan headers dari respons yang di-cache
+
+        if (cleanedRequestUrl.pathname.endsWith('.webmanifest')) {
+          headers.set('Content-Type', 'application/manifest+json');
+          console.log(`[SW] Correcting Content-Type for manifest to application/manifest+json.`);
+        } else if (cleanedRequestUrl.pathname.endsWith('.css')) {
           headers.set('Content-Type', 'text/css');
-          return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+          console.log(`[SW] Correcting Content-Type for CSS to text/css.`);
+        } else if (cleanedRequestUrl.pathname.endsWith('.js')) {
+          headers.set('Content-Type', 'application/javascript');
+          console.log(`[SW] Correcting Content-Type for JS to application/javascript.`);
         }
-        return response; // Kembali dari cache
+        // Tambahkan kondisi lain jika ada jenis file lain yang Content-Type-nya sering salah,
+        // contoh: .json, .svg, .woff, .ttf, dll.
+
+        return new Response(response.body, {
+          status: response.status,
+          statusText: response.statusText,
+          headers: headers // Gunakan headers yang sudah dimodifikasi
+        });
       }
 
       // Jika tidak di cache, coba dari jaringan
       return fetch(event.request).catch(() => {
-        // ⭐ Fallback untuk halaman HTML yang tidak di-cache dan offline ⭐
-        // Ini akan menangani URL navigasi yang gagal atau aset statis lainnya
-        // yang tidak di-cache dan pengguna offline.
+        // Fallback untuk permintaan navigasi utama
         if (event.request.mode === 'navigate') {
-          return caches.match('/404.html'); // Arahkan ke halaman 404 Anda
+          return caches.match('/404.html');
         }
-        // Fallback generik untuk aset non-HTML lainnya
+        // Fallback generik untuk aset lain yang gagal dimuat
         return new Response('Offline or resource not found', { status: 503, statusText: 'Service Unavailable' });
       });
     })
