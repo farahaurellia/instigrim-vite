@@ -114,6 +114,7 @@ export default class LoginView {
   }
 
   redirectToHome() {
+    console.log('Redirecting to home page');
     this.#model.navigateTo('/');
   }
 }

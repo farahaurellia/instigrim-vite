@@ -32,6 +32,7 @@ export default class LoginModel {
   }
 
   navigateTo(path) {
-    window.dispatchEvent(new CustomEvent('navigate', { detail: { path } }));
+    console.log('Navigating to:', path);
+    window.location.hash = path;
   }
 }

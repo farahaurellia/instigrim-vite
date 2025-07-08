@@ -104,6 +104,6 @@ export default class AddStoryModel {
   }
 
   navigateTo(path) {
-    window.dispatchEvent(new CustomEvent('navigate', { detail: { path } }));
+    window.location.hash = path;
   }
 }

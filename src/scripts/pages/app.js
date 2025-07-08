@@ -132,14 +132,6 @@ class App {
       }
     } catch (error) {
       console.error('Error rendering page:', error);
-      // Fallback jika ada error saat merender halaman (misalnya, masalah API)
-      this.#content.innerHTML = `
-        <div class="error-display" style="text-align:center; padding: 2rem; color: red;">
-          <h2>Terjadi Kesalahan!</h2>
-          <p>Maaf, tidak dapat memuat halaman ini.</p>
-          <button onclick="window.location.reload()">Coba Lagi</button>
-        </div>
-      `;
     }
 
     console.log('before setupPushNotification');
