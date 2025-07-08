@@ -28,11 +28,17 @@ class SavedStoriesView {
     }
 
     savedStoriesListContainer.innerHTML = stories.map(story => `
-      <article class="story-card" tabindex="0" role="button" aria-pressed="false" data-story-id="${story.id}" aria-label="Cerita oleh ${story.name}">
-        <h2 class="story-card-title">${story.name}</h2>
-        <p class="story-card-description">${story.description.substring(0, 100)}...</p>
-        <button class="delete-saved-story-btn" data-id="${story.id}">Hapus</button>
+        <article class="story-card" tabindex="0" role="button" aria-pressed="false" data-story-id="${story.id}" aria-label="Story oleh ${story.name}">
+        <figure>
+          <img src="${story.photoUrl}" 
+              alt="Foto oleh ${story.name}" 
+              onerror="this.onerror=null;this.src='https://via.placeholder.com/220x140?text=No+Image';">
+          <figcaption>${story.name}</figcaption>
+        </figure>
+        <p>${story.description || ''}</p>
+        <small>${new Date(story.createdAt).toLocaleString()}</small>
         <a href="#/stories/${story.id}" class="view-story-btn">Lihat Detail</a>
+        <button class="delete-saved-story-btn" data-id="${story.id}">Hapus</button>
       </article>
     `).join('');
   }

@@ -891,3 +891,147 @@ button i {
   from { opacity: 0; }
   to { opacity: 1; }
 }
+
+
+/* src/styles/savedStories.css */
+
+
+/* Base styling for the section */
+.saved-stories-section {
+  padding: 32px; /* Consistent padding with your .container */
+  margin-inline: auto;
+  max-width: 1300px; /* Consistent max-width */
+  font-family: 'Poppins', sans-serif; /* Use Poppins for text */
+  color: var(--coklat-tua); /* Use your defined color variable */
+  min-height: 70vh; /* Ensure it takes up some vertical space */
+  background-color: var(--kuning-pucat); /* Match overall app background */
+}
+
+.saved-stories-title {
+  text-align: center;
+  font-size: 2.5rem;
+  color: var(--coklat-tua); /* Use your theme color */
+  margin-bottom: 2rem;
+  font-weight: 700;
+  font-family: 'Caveat', cursive; /* Use a cursive font for the title */
+}
+
+/* Grid layout for stories */
+.saved-stories-grid {
+  display: grid; /* Use CSS Grid for better control */
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); /* Responsive grid */
+  gap: 24px; /* Space between cards */
+  justify-items: center; /* Center cards within their grid cells */
+  align-items: start; /* Align items to the start of their grid cells vertically */
+}
+
+/* Styling for individual story cards */
+.story-card {
+  background: #ffffff; /* White background for cards */
+  box-shadow: 0 6px 20px rgba(0,0,0,0.1); /* Enhanced shadow */
+  border-radius: 12px;
+  padding: 20px;
+  width: 100%; /* Take full width of grid cell */
+  max-width: 320px; /* Limit max width for smaller screens */
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  border: 1px solid rgba(0,0,0,0.05); /* Subtle border */
+}
+
+.story-card:hover {
+  transform: translateY(-5px); /* Lift effect on hover */
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15); /* Stronger shadow on hover */
+}
+
+.story-card-title {
+  font-size: 1.5rem;
+  color: var(--coklat-tua);
+  margin: 0 0 0.5rem 0;
+  font-weight: 600;
+}
+
+.story-card-description {
+  font-size: 0.95rem;
+  color: #555;
+  margin: 0;
+  line-height: 1.5;
+}
+
+/* Styling for buttons within the card */
+.delete-saved-story-btn,
+.view-story-btn {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  text-decoration: none; /* For the <a> tag */
+  text-align: center;
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  flex-shrink: 0; /* Prevent buttons from shrinking */
+}
+
+.delete-saved-story-btn {
+  background-color: var(--oranye); /* Orange theme color */
+  color: white;
+}
+
+.delete-saved-story-btn:hover {
+  background-color: #e08e5e; /* Slightly darker orange */
+}
+
+.view-story-btn {
+  background-color: var(--hijau-muda); /* Light green theme color */
+  color: var(--coklat-tua);
+}
+
+.view-story-btn:hover {
+  background-color: #9ab97d; /* Slightly darker green */
+}
+
+/* Message for no stories */
+.no-stories-message {
+  text-align: center;
+  width: 100%; /* Occupy full width of grid */
+  grid-column: 1 / -1; /* Span across all columns in grid */
+  font-size: 1.2rem;
+  color: #666;
+  padding: 40px 0;
+}
+
+/* Responsive adjustments */
+@media screen and (max-width: 768px) {
+  .saved-stories-section {
+    padding: 20px;
+  }
+  .saved-stories-title {
+    font-size: 2rem;
+  }
+  .story-card {
+    width: 90%; /* Adjust width for smaller screens */
+    max-width: none; /* No max-width constraint */
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .saved-stories-section {
+    padding: 15px;
+  }
+  .saved-stories-title {
+    font-size: 1.8rem;
+  }
+  .story-card {
+    padding: 15px;
+  }
+  .story-card-title {
+    font-size: 1.3rem;
+  }
+  .story-card-description {
+    font-size: 0.9rem;
+  }
+}
