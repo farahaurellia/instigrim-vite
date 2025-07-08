@@ -12,7 +12,7 @@
         --coklat-tua: #4B352A;
         --oranye: #CA7842;
         --hijau-muda: #B2CD9C;
-        --kuning-pucat: #F0F2BD;
+        --kuning-pucat: #FFFDE7;
       }
       body {
         font-family: 'Poppins', sans-serif;
@@ -40,16 +40,17 @@
         gap: 30px;
       }
       .brand-name {
-        font-size: 2rem;
         font-weight: bold;
         text-decoration: none;
         color: white;
+        font-family: 'Caveat', cursive; 
+        font-size: 2.5rem
       }
       .navigation-drawer {
         min-height: 100vh;
         width: 200px;
         padding: 20px 10px;
-        background: linear-gradient(90deg, var(--oranye) 0%, var(--coklat-tua) 100%);
+        /* background: linear-gradient(90deg, var(--oranye) 0%, var(--coklat-tua) 100%); */
 
         position: fixed;
         inset-block-start: 0;
@@ -95,9 +96,16 @@
         color: #fff;
         border-radius: 10px;
       }
+      .container-main {
+        padding-top: 10px;
+        background: linear-gradient(90deg, var(--oranye) 0%, var(--coklat-tua) 100%);
+      }
       .main-content {
+        border-radius: 30px;
         padding-block: 20px;
         background: #FFFDE7;
+        box-shadow: 0px 0px 10px 5px rgba(0, 0, 0, 0.2);
+
       }
       @media screen and (width > 1000px) {
         .navigation-drawer {
@@ -123,17 +131,54 @@
           display: none;
         }
       }
+      .skip-link {
+          position: absolute;
+          left: -999px;
+          top: 10px;
+          background: #AED581;
+          color: #222;
+          padding: 8px 16px;
+          z-index: 1000;
+          border-radius: 6px;
+          font-weight: bold;
+        }
+        .skip-link:focus {
+          left: 16px;
+          outline: 2px solid #333;
+        }
+        .footer {
+          background: linear-gradient(90deg, var(--oranye) 0%, var(--coklat-tua) 100%);
+          color: #fff;
+          text-align: center;
+          padding: 1.5rem 0;
+          font-size: 1.08rem;
+          letter-spacing: 0.5px;
+        }
+
+        .footer .container {
+          max-width: 900px;
+          margin: 0 auto;
+        }
+
+        .footer p {
+          margin: 0;
+          opacity: 0.85;
+          font-weight: 500;
+          letter-spacing: 0.5px;
+          font-family: 'Poppins', sans-serif;
+          font-size: 1rem;
+        }
     </style>
     <link rel="stylesheet" href="/styles/styles.css" />
     <script type="module" src="./scripts/index.js"></script>
-    <link rel="manifest" href="/app.webmanifest">
+    <link rel="manifest" href="/manifest.webmanifest">
     <script src="https://unpkg.com/feather-icons"></script>
   </head>
   <body>
     <a href="#main-content" class="skip-link">Lewati ke konten utama</a>
     <header>
       <div class="main-header container">
-        <a class="brand-name" href="#/" style="font-family: 'Caveat', cursive; font-size: 2.5rem; color: #fff;">
+        <a class="brand-name" href="#/">
           JejakKaki👣
         </a>
         <nav id="navigation-drawer" class="navigation-drawer">
@@ -147,11 +192,11 @@
         <button id="drawer-button" class="drawer-button" >☰</button>
       </div>
     </header>
-    <main id="main-content" class="main-content"></main>
-    <footer class="footer" style="background: #222; color: #fff; text-align: center; padding: 1rem 0;">
-      <div class="container">
-        <p>&copy; 2025 JejakKaki. Semua hak cipta dilindungi.</p>
-      </div>
+    <div class="container-main">
+      <main id="main-content" class="main-content"></main>
+    </div>
+    <footer class="footer">
+      <p>&copy; 2025 JejakKaki. Semua hak cipta dilindungi.</p>
     </footer>
     <script>
       feather.replace();

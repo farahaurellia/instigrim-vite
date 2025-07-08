@@ -5,6 +5,7 @@ import DetailStoryView from '../pages/detail-story/detailStoryView';
 import DetailStoryModel from '../pages/detail-story/detailStoryModel';
 import DetailStoryPresenter from '../pages/detail-story/detailStoryPresenter';
 import AddStoryView from '../pages/add-story/addStoryView';
+import NotFoundView from '../pages/not-found/notFoundView';
 
 const routes = {
   '/': new HomeView(),                    
@@ -15,6 +16,11 @@ const routes = {
     model: new DetailStoryModel(),
   }),  // Halaman Detail Cerita
   '/add-story': new AddStoryView(),     
+};
+
+export const getPage = (route) => {
+  console.log('getPage called with route:', route);
+  return routes[route] || NotFoundView;
 };
 
 export default routes;
