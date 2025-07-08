@@ -44,6 +44,11 @@ export default class DetailStoryModel {
   getStory() {
     return this.story;
   }
+
+  backToHome() {
+    console.log('Navigating back to home');
+    window.location.hash = '/'; // Navigate to home page
+  }
   
   async getCityCountryFromLatLon(lat, lon) {
     if (!lat || !lon) return { city: '', country: '' };

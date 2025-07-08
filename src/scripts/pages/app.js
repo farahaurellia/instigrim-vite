@@ -14,6 +14,21 @@ class App {
     this.#navigationDrawer = navigationDrawer;
 
     this.#setupDrawer();
+    // No routing listeners here, they will be in init()
+  }
+
+  // ⭐ ADD THIS NEW METHOD ⭐
+  async init() {
+    console.log('App: init() started. Setting up routing listeners.');
+    // 1. Initial render when the app loads
+    await this.renderPage();
+
+    // 2. Listen for hash changes to re-render the page
+    window.addEventListener('hashchange', () => {
+      console.log('App: Hash changed detected. Re-rendering page.');
+      this.renderPage(); // Call renderPage when hash changes
+    });
+    console.log('App: Routing listeners set up.');
   }
 
   #setupDrawer() {
@@ -61,8 +76,11 @@ class App {
 
         const success = await subscribeToNotification();
         if (success) {
+          // It's generally better to just update the UI state here,
+          // rather than re-running the entire setup function.
+          // The re-run was common in older patterns, but can be less efficient.
           notifNavList.innerHTML = UnsubscribeNotificationBtn();
-          this.#setupPushNotification();
+          // this.#setupPushNotification(); // Consider removing this line
         }
       });
     }
@@ -73,7 +91,7 @@ class App {
         const success = await unsubscribeFromNotification();
         if (success) {
           notifNavList.innerHTML = SubscribeNotificationBtn();
-          this.#setupPushNotification();
+          // this.#setupPushNotification(); // Consider removing this line
         }
       });
     }
@@ -104,7 +122,7 @@ class App {
         const renderedContent = await page.render();
         console.log('after render');
         this.#content.innerHTML = renderedContent;
-        
+
         // Panggil afterRender jika ada
         if (page.afterRender) {
           console.log('before afterRender');
