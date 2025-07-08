@@ -19,24 +19,50 @@
     }
     
   ],
+  "shortcuts": [
+    {
+      "name": "Tambah Cerita Baru",
+      "short_name": "Tambah Cerita",
+      "description": "Membuat cerita perjalanan baru",
+      "url": "/#/add-story",
+      "icons": [
+        {
+          "src": "/images/add-story96.png", 
+          "sizes": "96x96",
+          "type": "image/png"
+        },
+        {
+          "src": "/images/add-story128.png",
+          "sizes": "128x128",
+          "type": "image/png"
+        }
+      ]
+    }
+  ],
   "screenshots": [
     {
-      "src": "src/images/icons/screenshot1.png",
-      "sizes": "640x480",
+      "src": "images/icons/screenshots/Screenshot1.png",
+      "sizes": "1920x1080",
       "type": "image/png",
       "label": "Tampilan Beranda"
     },
     {
-      "src": "src/images/icons/screenshot2.png",
-      "sizes": "640x480",
+      "src": "images/icons/screenshots/Screenshot2.png",
+      "sizes": "1920x1080",
       "type": "image/png",
       "label": "Tampilan Profil"
     },
     {
-      "src": "src/images/icons/screenshot3.png",
-      "sizes": "640x480",
+      "src": "images/icons/screenshots/Screenshot3.png",
+      "sizes": "1920x1080",
       "type": "image/png",
       "label": "Tampilan Peta"
+    },
+    {
+      "src": "images/icons/screenshots/mobile-jejakkaki.png",
+      "sizes": "400x870",
+      "type": "image/png",
+      "label": "Tampilan Mobile"
     }
   ],
   "orientation": "portrait",
