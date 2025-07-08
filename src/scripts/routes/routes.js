@@ -6,6 +6,9 @@ import DetailStoryModel from '../pages/detail-story/detailStoryModel';
 import DetailStoryPresenter from '../pages/detail-story/detailStoryPresenter';
 import AddStoryView from '../pages/add-story/addStoryView';
 import NotFoundView from '../pages/not-found/notFoundView';
+import SavedStoriesView from '../pages/saved-stories/savedStoriesView';
+import SavedStoriesModel from '../pages/saved-stories/savedStoriesModel';
+import SavedStoriesPresenter from '../pages/saved-stories/savedStoriesPresenter';
 
 const routes = {
   '/': new HomeView(),                    
@@ -15,7 +18,11 @@ const routes = {
     view: new DetailStoryView(),
     model: new DetailStoryModel(),
   }),  // Halaman Detail Cerita
-  '/add-story': new AddStoryView(),     
+  '/saved-stories': new SavedStoriesPresenter({
+    view: new SavedStoriesView(),
+    model: new SavedStoriesModel(),
+  }),
+  '/add-story': new AddStoryView(),
 };
 
 export const getPage = (route) => {
